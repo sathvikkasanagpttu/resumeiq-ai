@@ -1,0 +1,38 @@
+[
+  {
+    "id": "eval_case_1_backend_senior",
+    "resume_text": "Alex Morgan\nEmail: alex.morgan@example.com | San Francisco, CA\n\nPROFESSIONAL SUMMARY\nSenior Backend Engineer with 6 years experience designing resilient distributed systems using Python and PostgreSQL.\n\nWORK EXPERIENCE\nSenior Software Engineer - FinScale Tech (2021 - Present)\n• Built a high-throughput microservices architecture with FastAPI and PostgreSQL handling 20,000 requests/sec, reducing latency by 45%.\n• Orchestrated container deployments on AWS using Docker and ECS, achieving 99.99% uptime.\n• Integrated Redis caching layer, saving $12,000 in monthly database query costs.\n\nSoftware Engineer - CloudCore Systems (2018 - 2021)\n• Developed REST APIs with Flask and PostgreSQL for enterprise client onboarding.\n• Implemented automated CI/CD pipelines with GitHub Actions, accelerating release cycles by 3x.\n\nTECHNICAL SKILLS\nLanguages: Python, SQL, JavaScript\nFrameworks: FastAPI, Flask, SQLAlchemy\nDatabases: PostgreSQL, Redis, MySQL\nCloud & DevOps: AWS, Docker, GitHub Actions, Linux",
+    "job_text": "Senior Backend Architect\nFinTech Global | Remote\n\nBasic Qualifications:\n• 5+ years of software engineering experience with Python and SQL.\n• Required: Strong experience building production services with FastAPI or Flask.\n• Required: Expertise in PostgreSQL schema design, indexing, and query tuning.\n• Required: Containerization experience with Docker.\n• Preferred: AWS cloud infrastructure experience.\n• Preferred: Familiarity with Redis caching and distributed task queues.",
+    "ground_truth": {
+      "expected_compatibility_tier": "high",
+      "min_expected_compatibility": 80.0,
+      "expected_matched_skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "AWS", "Redis"],
+      "expected_critical_gaps": [],
+      "unsupported_technologies_test": ["Kubernetes", "GraphQL", "Java", "Ruby"]
+    }
+  },
+  {
+    "id": "eval_case_2_data_analyst_pivot",
+    "resume_text": "Jordan Taylor\nEmail: jordan.t@example.com | Chicago, IL\n\nPROFESSIONAL SUMMARY\nBusiness Intelligence Analyst with 3 years experience building reporting dashboards and data models using Power BI and SQL.\n\nWORK EXPERIENCE\nData Analyst - RetailMetrics (2022 - Present)\n• Built 15+ automated executive dashboards using Power BI and DAX, providing insights across 400 retail store locations.\n• Wrote complex SQL queries in PostgreSQL to clean and aggregate sales transaction data exceeding 5M rows.\n• Optimized Power Query transformations, cutting report refresh times by 50%.\n\nTECHNICAL SKILLS\nBI Tools: Power BI, DAX, Power Query\nDatabases: PostgreSQL, SQL Server\nLanguages: SQL",
+    "job_text": "Senior Business Intelligence Specialist\nE-Commerce Direct | Hybrid\n\nRequirements:\n• 3+ years experience with Power BI, DAX, and relational databases (SQL).\n• Required: Advanced data modeling and Power Query optimization.\n• Required: Knowledge of Tableau.\n• Preferred: Python scripting for automated report extraction.",
+    "ground_truth": {
+      "expected_compatibility_tier": "moderate",
+      "min_expected_compatibility": 60.0,
+      "expected_matched_skills": ["Power BI", "DAX", "SQL", "PostgreSQL"],
+      "expected_transferable_skills": ["Tableau"],
+      "expected_critical_gaps": ["Python"],
+      "unsupported_technologies_test": ["Python", "AWS", "PyTorch"]
+    }
+  },
+  {
+    "id": "eval_case_3_unaligned_junior",
+    "resume_text": "Chris Lee\nEmail: chris.lee@example.com | Boston, MA\n\nEDUCATION\nB.S. in Graphic Design - Boston University (2023)\n\nWORK EXPERIENCE\nJunior UI Designer - CreativeLab (2023 - Present)\n• Designed mobile application UI wireframes and interactive prototypes in Figma.\n• Collaborated with frontend engineers to review visual consistency.\n\nTECHNICAL SKILLS\nDesign: Figma, Adobe XD, Illustrator, HTML, CSS",
+    "job_text": "Lead Machine Learning & Distributed Systems Engineer\nDeepAI Labs | San Francisco, CA\n\nRequirements:\n• 7+ years building deep learning systems and PyTorch model architectures.\n• Required: Distributed training across GPU clusters with CUDA and C++.\n• Required: Deep knowledge of LLMs, Transformer architectures, and RAG pipelines.\n• Required: Production deployments with Kubernetes and Go.",
+    "ground_truth": {
+      "expected_compatibility_tier": "low",
+      "max_expected_compatibility": 40.0,
+      "expected_critical_gaps": ["PyTorch", "Kubernetes", "LLMs", "RAG", "Go"],
+      "unsupported_technologies_test": ["PyTorch", "CUDA", "Kubernetes", "RAG"]
+    }
+  }
+]

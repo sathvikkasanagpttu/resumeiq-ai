@@ -1,0 +1,112 @@
+import time
+import uuid
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+from app.core.logging import logger, setup_logger
+from app.core.database import SessionLocal, engine, Base
+from app.core.exceptions import ResumeIQException
+from app.api.v1 import api_v1_router
+from app.services.rag.retriever import rag_retriever
+from app.models.user import User, CandidateProfile
+from app.core.security import get_password_hash
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: ensure tables exist
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables initialized.")
+
+    # Seed demo user for testing/instant UX
+    with SessionLocal() as db:
+        rag_retriever.sync_to_db(db)
+        demo_user = db.query(User).filter(User.email == "demo@resumeiq.ai").first()
+        if not demo_user:
+            demo_user = User(
+                email="demo@resumeiq.ai",
+                hashed_password=get_password_hash("ResumeIQ2026!"),
+                full_name="Sarah Chen",
+                role="candidate"
+            )
+            db.add(demo_user)
+            db.flush()
+            profile = CandidateProfile(
+                user_id=demo_user.id,
+                headline="Senior Backend & AI Systems Engineer",
+                summary="Over 6 years of experience building high-throughput distributed systems and LLM/RAG pipelines.",
+                total_experience_years=6.0,
+                seniority_level="Senior",
+                location="San Francisco, CA"
+            )
+            db.add(profile)
+            db.commit()
+            logger.info("Demo user 'demo@resumeiq.ai' seeded successfully.")
+
+    yield
+    logger.info("Shutting down ResumeIQ application.")
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    description="Evidence-First AI Resume & Job Matching Engine",
+    version="1.0.0",
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Tracing & Latency Middleware
+@app.middleware("http")
+async def add_process_time_and_logging(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    start_time = time.time()
+    
+    response = await call_next(request)
+    
+    process_time = round((time.time() - start_time) * 1000, 2)
+    response.headers["X-Request-ID"] = request_id
+    response.headers["X-Response-Time-MS"] = str(process_time)
+    
+    logger.info(
+        f"{request.method} {request.url.path} completed with {response.status_code} in {process_time}ms",
+        extra={"request_id": request_id, "latency_ms": process_time}
+    )
+    return response
+
+# Custom Exception Handler
+@app.exception_handler(ResumeIQException)
+async def resumeiq_exception_handler(request: Request, exc: ResumeIQException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error_code": exc.error_code,
+            "detail": exc.detail,
+            "extra": exc.extra,
+            "request_id": getattr(request.state, "request_id", None)
+        }
+    )
+
+# Include Routers
+app.include_router(api_v1_router, prefix=settings.API_V1_STR)
+
+@app.get("/")
+def root():
+    return {
+        "app": "ResumeIQ",
+        "tagline": "Evidence-First AI Resume & Job Matching Engine",
+        "version": "1.0.0",
+        "status": "operational",
+        "docs": "/docs",
+        "api_v1": settings.API_V1_STR
+    }
