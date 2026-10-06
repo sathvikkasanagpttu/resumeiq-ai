@@ -1,0 +1,751 @@
+[
+  {
+    "id": "case_01_sr_backend",
+    "category": "Senior Backend",
+    "resume_text": "ALEX MORGAN\nalex.morgan@example.com | (555) 011-2233 | San Francisco, CA\nSUMMARY: Senior Backend Engineer with 6 years experience building distributed microservices in Python and PostgreSQL.\nEXPERIENCE:\nSenior Software Engineer at FinScale (2021 - Present)\n- Architected payment microservices with FastAPI and PostgreSQL handling 20,000 req/s.\n- Reduced database query latency by 45% using Redis caching.\n- Orchestrated container deployment with Docker.\nSoftware Engineer at CloudCore (2018 - 2021)\n- Built REST APIs using Flask and PostgreSQL.\nSKILLS:\nBackend: Python, FastAPI, Flask, PostgreSQL, Redis, Docker\nEDUCATION:\nB.S. Computer Science at UC Berkeley (2014 - 2018)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "FastAPI",
+        "Flask",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "expected_companies": [
+        "FinScale",
+        "CloudCore"
+      ],
+      "unsupported_claims": [
+        "Kubernetes",
+        "GraphQL",
+        "Java",
+        "Ruby",
+        "Golang"
+      ],
+      "expected_metrics": [
+        "20,000 req/s",
+        "45%"
+      ]
+    }
+  },
+  {
+    "id": "case_02_jr_frontend",
+    "category": "Junior Frontend",
+    "resume_text": "SARAH CHEN\nsarah.chen@example.com | Seattle, WA\nSUMMARY: Frontend Developer with 2 years of experience crafting responsive web apps using React and TypeScript.\nEXPERIENCE:\nJunior Frontend Developer at PixelForge (2022 - Present)\n- Developed responsive web interfaces using React and TypeScript.\n- Implemented state management using Redux.\n- Styled components using Tailwind CSS and CSS Modules.\nSKILLS:\nFrontend: React, TypeScript, JavaScript, Redux, HTML, CSS, Tailwind CSS\nEDUCATION:\nB.S. in Informatics at University of Washington (2018 - 2022)",
+    "ground_truth": {
+      "expected_skills": [
+        "React",
+        "TypeScript",
+        "JavaScript",
+        "Redux",
+        "HTML",
+        "CSS"
+      ],
+      "expected_companies": [
+        "PixelForge"
+      ],
+      "unsupported_claims": [
+        "Angular",
+        "Vue",
+        "AWS",
+        "Docker",
+        "Python"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_03_data_scientist",
+    "category": "Data Science",
+    "resume_text": "DAVID PARK\ndavid.park@example.com | Boston, MA\nSUMMARY: Data Scientist with 4 years experience building predictive machine learning models in Python.\nEXPERIENCE:\nData Scientist at HealthAnalytica (2021 - Present)\n- Trained gradient boosting models with Scikit-Learn and Pandas predicting patient readmission with 88% accuracy.\n- Analyzed 500,000 clinical records using SQL and PostgreSQL.\nData Analyst at BioMetrics (2019 - 2021)\n- Automated monthly analytical dashboards in Python.\nSKILLS:\nData & ML: Python, Pandas, Scikit-Learn, SQL, PostgreSQL, NumPy\nEDUCATION:\nM.S. in Statistics at Columbia University (2017 - 2019)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "Pandas",
+        "Scikit-Learn",
+        "SQL",
+        "PostgreSQL",
+        "NumPy"
+      ],
+      "expected_companies": [
+        "HealthAnalytica",
+        "BioMetrics"
+      ],
+      "unsupported_claims": [
+        "TensorFlow",
+        "PyTorch",
+        "Kubernetes",
+        "Snowflake"
+      ],
+      "expected_metrics": [
+        "88%",
+        "500,000"
+      ]
+    }
+  },
+  {
+    "id": "case_04_ml_engineer",
+    "category": "Machine Learning",
+    "resume_text": "ELENA ROSTOVA\nelena.r@example.com | New York, NY\nSUMMARY: Machine Learning Engineer specializing in computer vision and deep learning pipelines with PyTorch.\nEXPERIENCE:\nMachine Learning Engineer at VisionTech (2021 - Present)\n- Trained convolutional neural networks with PyTorch achieving 94% mAP on object detection.\n- Deployed ML inference endpoints using Docker and FastAPI serving 500 req/s.\nSKILLS:\nML & Frameworks: Python, PyTorch, FastAPI, Docker, OpenCV\nEDUCATION:\nM.S. in Computer Science at NYU (2019 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "PyTorch",
+        "FastAPI",
+        "Docker"
+      ],
+      "expected_companies": [
+        "VisionTech"
+      ],
+      "unsupported_claims": [
+        "TensorFlow",
+        "Kubernetes",
+        "AWS SageMaker",
+        "Spark"
+      ],
+      "expected_metrics": [
+        "94%",
+        "500 req/s"
+      ]
+    }
+  },
+  {
+    "id": "case_05_devops_sre",
+    "category": "DevOps / SRE",
+    "resume_text": "MARCUS AURELIUS\nmarcus.a@example.com | Austin, TX\nSUMMARY: Site Reliability Engineer focused on Kubernetes infrastructure, CI/CD, and Terraform automation.\nEXPERIENCE:\nSenior DevOps Engineer at InfraCloud (2020 - Present)\n- Orchestrated multi-region Kubernetes clusters running Docker containers across AWS.\n- Automated infrastructure provisioning using Terraform and Ansible.\n- Maintained 99.95% system availability across 40 microservices.\nSKILLS:\nDevOps: Kubernetes, Docker, Terraform, Ansible, AWS, Linux\nEDUCATION:\nB.S. in Computer Engineering at UT Austin (2016 - 2020)",
+    "ground_truth": {
+      "expected_skills": [
+        "Kubernetes",
+        "Docker",
+        "Terraform",
+        "Ansible",
+        "AWS",
+        "Linux"
+      ],
+      "expected_companies": [
+        "InfraCloud"
+      ],
+      "unsupported_claims": [
+        "GCP",
+        "Azure",
+        "Pulumi",
+        "Ruby"
+      ],
+      "expected_metrics": [
+        "99.95%",
+        "40 microservices"
+      ]
+    }
+  },
+  {
+    "id": "case_06_full_stack",
+    "category": "Full Stack",
+    "resume_text": "JESSICA TAYLOR\njessica.t@example.com | Chicago, IL\nSUMMARY: Full Stack Engineer building end-to-end web applications with React, Node.js, and PostgreSQL.\nEXPERIENCE:\nFull Stack Developer at Omnicorp (2021 - Present)\n- Developed full-stack SaaS features using React, Node.js, and Express.\n- Designed database schemas and indexing in PostgreSQL.\nSKILLS:\nFull Stack: React, JavaScript, Node.js, Express, PostgreSQL, HTML, CSS\nEDUCATION:\nB.S. in Computer Science at University of Illinois (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "React",
+        "JavaScript",
+        "Node.js",
+        "Express",
+        "PostgreSQL",
+        "HTML",
+        "CSS"
+      ],
+      "expected_companies": [
+        "Omnicorp"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Docker",
+        "Kubernetes",
+        "Ruby on Rails"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_07_product_manager",
+    "category": "Product Management",
+    "resume_text": "PRIYA SHARMA\npriya.s@example.com | San Jose, CA\nSUMMARY: Technical Product Manager with 5 years leading roadmap delivery for cloud B2B software products.\nEXPERIENCE:\nSenior Product Manager at CloudSaaS (2021 - Present)\n- Led product roadmap for enterprise analytics tool, growing ARR by 30%.\n- Authored PRDs and collaborated with engineering teams using Agile and Jira.\nProduct Manager at AppFlow (2019 - 2021)\n- Managed feature launches for customer portal.\nSKILLS:\nProduct: Product Management, Agile, Scrum, Jira, Roadmapping, User Research\nEDUCATION:\nB.A. in Economics at Stanford University (2015 - 2019)",
+    "ground_truth": {
+      "expected_skills": [
+        "Product Management",
+        "Agile",
+        "Scrum",
+        "Jira"
+      ],
+      "expected_companies": [
+        "CloudSaaS",
+        "AppFlow"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Java",
+        "Docker",
+        "Figma"
+      ],
+      "expected_metrics": [
+        "30%"
+      ]
+    }
+  },
+  {
+    "id": "case_08_qa_automation",
+    "category": "QA / Testing",
+    "resume_text": "BRIAN KOWALSKI\nbrian.k@example.com | Denver, CO\nSUMMARY: QA Automation Engineer with 4 years building automated test suites with Python, Selenium, and PyTest.\nEXPERIENCE:\nQA Automation Engineer at QualityFirst (2020 - Present)\n- Engineered end-to-end regression test suite using Python and Selenium.\n- Integrated automated tests into CI/CD pipelines with GitHub Actions.\n- Reduced manual testing cycle from 3 days to 4 hours.\nSKILLS:\nTesting: Python, Selenium, PyTest, Automated Testing, GitHub Actions\nEDUCATION:\nB.S. in Information Systems at Colorado State (2016 - 2020)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "Selenium",
+        "PyTest",
+        "GitHub Actions"
+      ],
+      "expected_companies": [
+        "QualityFirst"
+      ],
+      "unsupported_claims": [
+        "Cypress",
+        "Playwright",
+        "Java",
+        "Docker"
+      ],
+      "expected_metrics": [
+        "3 days to 4 hours"
+      ]
+    }
+  },
+  {
+    "id": "case_09_cloud_security",
+    "category": "Cybersecurity",
+    "resume_text": "TARIQ AL-MANSOUR\ntariq.m@example.com | Washington, DC\nSUMMARY: Cloud Security Architect designing Zero Trust architecture and IAM governance on AWS.\nEXPERIENCE:\nLead Security Architect at SecureCloud (2020 - Present)\n- Hardened AWS multi-account infrastructure implementing IAM policies and KMS encryption.\n- Automated vulnerability scanning using Python and AWS Security Hub.\nSKILLS:\nSecurity: AWS, Cyber Security, Cryptography, Python, Linux\nEDUCATION:\nM.S. in Cybersecurity at George Mason University (2018 - 2020)",
+    "ground_truth": {
+      "expected_skills": [
+        "AWS",
+        "Python",
+        "Linux"
+      ],
+      "expected_companies": [
+        "SecureCloud"
+      ],
+      "unsupported_claims": [
+        "Azure",
+        "GCP",
+        "Kubernetes",
+        "Splunk"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_10_ios_dev",
+    "category": "Mobile iOS",
+    "resume_text": "CHLOE DUBOIS\nchloe.d@example.com | Los Angeles, CA\nSUMMARY: iOS Developer with 3 years building consumer mobile apps using Swift and SwiftUI.\nEXPERIENCE:\niOS Developer at MobileCraft (2021 - Present)\n- Developed native iOS applications using Swift and SwiftUI.\n- Integrated REST APIs and local data caching with CoreData.\n- Maintained 4.8 star App Store rating across 100,000 active users.\nSKILLS:\niOS: Swift, SwiftUI, iOS, Git\nEDUCATION:\nB.S. in Computer Science at UCLA (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "Swift",
+        "iOS",
+        "Git"
+      ],
+      "expected_companies": [
+        "MobileCraft"
+      ],
+      "unsupported_claims": [
+        "Kotlin",
+        "React Native",
+        "Flutter",
+        "Android"
+      ],
+      "expected_metrics": [
+        "100,000"
+      ]
+    }
+  },
+  {
+    "id": "case_11_android_dev",
+    "category": "Mobile Android",
+    "resume_text": "RAJESH PATEL\nrajesh.p@example.com | Atlanta, GA\nSUMMARY: Android Developer with 4 years building scalable apps using Kotlin and Jetpack Compose.\nEXPERIENCE:\nAndroid Engineer at DroidWorks (2020 - Present)\n- Engineered native Android apps with Kotlin and Jetpack Compose.\n- Implemented Coroutines for asynchronous network tasks.\nSKILLS:\nAndroid: Kotlin, Android, Java, Git\nEDUCATION:\nB.Tech in Computer Engineering at Georgia Tech (2016 - 2020)",
+    "ground_truth": {
+      "expected_skills": [
+        "Kotlin",
+        "Android",
+        "Java",
+        "Git"
+      ],
+      "expected_companies": [
+        "DroidWorks"
+      ],
+      "unsupported_claims": [
+        "Swift",
+        "Objective-C",
+        "Flutter",
+        "React Native"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_12_data_engineer",
+    "category": "Data Engineering",
+    "resume_text": "VICTORIA ADAMS\nvictoria.a@example.com | Minneapolis, MN\nSUMMARY: Data Engineer building high-scale streaming and batch data pipelines using Apache Spark and Python.\nEXPERIENCE:\nData Engineer at BigDataFlow (2021 - Present)\n- Built distributed ETL pipelines with Apache Spark and Python processing 2TB daily data.\n- Modeled data warehousing tables in PostgreSQL and Snowflake.\nSKILLS:\nData Eng: Python, Apache Spark, SQL, PostgreSQL, Docker\nEDUCATION:\nB.S. in Computer Science at University of Minnesota (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "Apache Spark",
+        "SQL",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "expected_companies": [
+        "BigDataFlow"
+      ],
+      "unsupported_claims": [
+        "Flink",
+        "Kafka",
+        "Hadoop",
+        "Scala"
+      ],
+      "expected_metrics": [
+        "2TB"
+      ]
+    }
+  },
+  {
+    "id": "case_13_blockchain_dev",
+    "category": "Web3 / Blockchain",
+    "resume_text": "NIKOLAI IVANOV\nnikolai.i@example.com | Miami, FL\nSUMMARY: Smart Contract Developer writing decentralized protocols with Solidity and JavaScript.\nEXPERIENCE:\nBlockchain Developer at ChainForge (2022 - Present)\n- Developed secure smart contracts using Solidity and Hardhat.\n- Built web3 frontend connections using JavaScript and React.\nSKILLS:\nWeb3: Solidity, JavaScript, React, Git\nEDUCATION:\nB.S. in Software Engineering at Florida State (2018 - 2022)",
+    "ground_truth": {
+      "expected_skills": [
+        "Solidity",
+        "JavaScript",
+        "React",
+        "Git"
+      ],
+      "expected_companies": [
+        "ChainForge"
+      ],
+      "unsupported_claims": [
+        "Rust",
+        "Solana",
+        "Python",
+        "Go"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_14_fresher_cs",
+    "category": "Fresher / Student",
+    "resume_text": "KEVIN ZHANG\nkevin.z@example.com | San Diego, CA\nEDUCATION:\nB.S. in Computer Science at UC San Diego (2020 - 2024) | GPA: 3.8\nPROJECTS:\nCloud File Storage System (2023)\n- Implemented file storage API using Python and FastAPI.\n- Containerized application with Docker.\nDistributed Key-Value Store (2024)\n- Built distributed storage protocol using Go.\nSKILLS:\nLanguages: Python, Go, JavaScript, C++\nTools: Docker, Git, Linux",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "FastAPI",
+        "Docker",
+        "Go",
+        "JavaScript",
+        "C++",
+        "Git",
+        "Linux"
+      ],
+      "expected_companies": [
+        "UC San Diego"
+      ],
+      "unsupported_claims": [
+        "Kubernetes",
+        "AWS",
+        "Redis",
+        "Kafka"
+      ],
+      "expected_metrics": [
+        "3.8"
+      ]
+    }
+  },
+  {
+    "id": "case_15_career_switcher_qa",
+    "category": "Career Switcher",
+    "resume_text": "RACHEL MILLER\nrachel.m@example.com | Phoenix, AZ\nSUMMARY: Detail-oriented professional transitioning into QA Engineering with practical experience in manual and Python automated testing.\nEXPERIENCE:\nQA Intern at TechForward (2023 - Present)\n- Executed manual and automated regression tests in Python with PyTest.\nHigh School Math Teacher at Phoenix Academy (2018 - 2023)\n- Analyzed curriculum outcomes for 150+ students.\nSKILLS:\nTesting: Python, PyTest, Git\nEDUCATION:\nB.A. in Mathematics at Arizona State University (2014 - 2018)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "PyTest",
+        "Git"
+      ],
+      "expected_companies": [
+        "TechForward",
+        "Phoenix Academy"
+      ],
+      "unsupported_claims": [
+        "Selenium",
+        "Java",
+        "Docker",
+        "Kubernetes"
+      ],
+      "expected_metrics": [
+        "150+"
+      ]
+    }
+  },
+  {
+    "id": "case_16_career_switcher_analyst",
+    "category": "Career Switcher",
+    "resume_text": "SAMANTHA GREEN\nsamantha.g@example.com | Dallas, TX\nSUMMARY: Former Financial Accountant transitioned to Data Analytics, proficient in SQL, PostgreSQL, and Power BI.\nEXPERIENCE:\nJunior Data Analyst at FinMetrics (2023 - Present)\n- Wrote SQL queries in PostgreSQL to analyze monthly revenue trends.\n- Built interactive reporting dashboards in Power BI.\nSenior Accountant at AuditGroup (2019 - 2023)\n- Reconciled ledger accounts and audit reports.\nSKILLS:\nAnalytics: SQL, PostgreSQL, Power BI, Excel\nEDUCATION:\nB.B.A. in Accounting at SMU (2015 - 2019)",
+    "ground_truth": {
+      "expected_skills": [
+        "SQL",
+        "PostgreSQL",
+        "Power BI"
+      ],
+      "expected_companies": [
+        "FinMetrics",
+        "AuditGroup"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Pandas",
+        "Tableau",
+        "AWS"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_17_vp_engineering",
+    "category": "Executive",
+    "resume_text": "ARTHUR PENDRAGON\narthur.p@example.com | San Francisco, CA\nSUMMARY: VP of Engineering with 12+ years scaling engineering organizations from 15 to 120 engineers.\nEXPERIENCE:\nVP of Engineering at HyperScale Tech (2019 - Present)\n- Led 85-person distributed engineering team across backend, platform, and data orgs.\n- Reduced cloud infrastructure spend by 25% through strategic AWS architecture optimization.\nDirector of Engineering at CoreSaaS (2015 - 2019)\n- Managed core product delivery and agile processes.\nSKILLS:\nLeadership: Software Architecture, Agile, Cloud Computing, AWS\nEDUCATION:\nM.S. in Computer Science at Stanford University (2008 - 2010)",
+    "ground_truth": {
+      "expected_skills": [
+        "Software Architecture",
+        "Agile",
+        "AWS"
+      ],
+      "expected_companies": [
+        "HyperScale Tech",
+        "CoreSaaS"
+      ],
+      "unsupported_claims": [
+        "Kubernetes",
+        "C++",
+        "Rust",
+        "Golang"
+      ],
+      "expected_metrics": [
+        "25%",
+        "85-person"
+      ]
+    }
+  },
+  {
+    "id": "case_18_solutions_architect",
+    "category": "Solutions Architecture",
+    "resume_text": "LEO VANDERBILT\nleo.v@example.com | Philadelphia, PA\nSUMMARY: Enterprise Solutions Architect designing hybrid-cloud architectures on AWS and Docker.\nEXPERIENCE:\nPrincipal Solutions Architect at EnterpriseSys (2020 - Present)\n- Designed cloud migrations for Fortune 500 financial clients onto AWS.\n- Standardized container deployment patterns using Docker.\nSKILLS:\nCloud: AWS, Docker, Linux, System Architecture\nEDUCATION:\nB.S. in Electrical Engineering at Penn State (2012 - 2016)",
+    "ground_truth": {
+      "expected_skills": [
+        "AWS",
+        "Docker",
+        "Linux"
+      ],
+      "expected_companies": [
+        "EnterpriseSys"
+      ],
+      "unsupported_claims": [
+        "GCP",
+        "Kubernetes",
+        "Python",
+        "Java"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_19_embedded_engineer",
+    "category": "Embedded / IoT",
+    "resume_text": "HIROSHI TANAKA\nhiroshi.t@example.com | San Jose, CA\nSUMMARY: Embedded Systems Engineer programming microcontrollers and real-time operating systems in C and C++.\nEXPERIENCE:\nEmbedded Firmware Engineer at IoTDevices (2021 - Present)\n- Programmed firmware for ARM microcontrollers in C and C++.\n- Implemented UART and SPI communication drivers.\nSKILLS:\nEmbedded: C, C++, Embedded Systems, Linux, Git\nEDUCATION:\nB.S. in Computer Engineering at San Jose State (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "C",
+        "C++",
+        "Linux",
+        "Git"
+      ],
+      "expected_companies": [
+        "IoTDevices"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Java",
+        "Docker",
+        "AWS"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_20_ui_ux_designer",
+    "category": "UI/UX Design",
+    "resume_text": "MAYA LIN\nmaya.lin@example.com | New York, NY\nSUMMARY: Senior Product Designer crafting user-centered mobile and web design systems using Figma.\nEXPERIENCE:\nProduct Designer at DesignForge (2021 - Present)\n- Designed design system in Figma adopted across 8 product squads.\n- Conducted usability testing sessions improving conversion by 18%.\nSKILLS:\nDesign: Figma, UI/UX Design, Wireframing, HTML, CSS\nEDUCATION:\nB.F.A. in Graphic Design at RISD (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "Figma",
+        "HTML",
+        "CSS"
+      ],
+      "expected_companies": [
+        "DesignForge"
+      ],
+      "unsupported_claims": [
+        "JavaScript",
+        "React",
+        "Python",
+        "Docker"
+      ],
+      "expected_metrics": [
+        "18%"
+      ]
+    }
+  },
+  {
+    "id": "case_21_dba",
+    "category": "Database Administration",
+    "resume_text": "CARLOS MENDEZ\ncarlos.m@example.com | Houston, TX\nSUMMARY: Database Administrator with 7 years administering high-availability PostgreSQL and MySQL clusters.\nEXPERIENCE:\nLead DBA at DataVault (2019 - Present)\n- Managed 50+ PostgreSQL database instances with streaming replication and automated failover.\n- Optimized query execution plans reducing CPU utilization by 30%.\nSKILLS:\nDatabase: PostgreSQL, MySQL, SQL, Linux, Bash\nEDUCATION:\nB.S. in Management Information Systems at University of Houston (2013 - 2017)",
+    "ground_truth": {
+      "expected_skills": [
+        "PostgreSQL",
+        "MySQL",
+        "SQL",
+        "Linux",
+        "Bash"
+      ],
+      "expected_companies": [
+        "DataVault"
+      ],
+      "unsupported_claims": [
+        "Oracle",
+        "MongoDB",
+        "Python",
+        "Kubernetes"
+      ],
+      "expected_metrics": [
+        "30%",
+        "50+"
+      ]
+    }
+  },
+  {
+    "id": "case_22_ai_researcher",
+    "category": "AI Research",
+    "resume_text": "DR. ANNA WEISS\nanna.weiss@example.com | Cambridge, MA\nSUMMARY: AI Researcher focusing on natural language processing, LLM architectures, and transformer optimization.\nEXPERIENCE:\nResearch Scientist at NeuralLab (2022 - Present)\n- Published novel transformer attention mechanism using PyTorch.\n- Trained multi-billion parameter language models on GPU clusters.\nSKILLS:\nAI & Research: Python, PyTorch, Transformers, Deep Learning, Linux\nEDUCATION:\nPh.D. in Computer Science at MIT (2018 - 2022)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "PyTorch",
+        "Deep Learning",
+        "Linux"
+      ],
+      "expected_companies": [
+        "NeuralLab",
+        "MIT"
+      ],
+      "unsupported_claims": [
+        "FastAPI",
+        "React",
+        "Docker",
+        "Java"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_23_k8s_sre",
+    "category": "Infrastructure / SRE",
+    "resume_text": "DMITRI VOLKOV\ndmitri.v@example.com | Chicago, IL\nSUMMARY: Infrastructure Engineer specializing in Kubernetes operators, service mesh, and Prometheus observability.\nEXPERIENCE:\nSRE at CloudWorks (2021 - Present)\n- Managed Kubernetes clusters running 200+ containerized microservices.\n- Deployed Prometheus and Grafana for cluster monitoring.\nSKILLS:\nInfra: Kubernetes, Docker, Prometheus, Grafana, Linux, Go\nEDUCATION:\nB.S. in Computer Science at Purdue (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "Kubernetes",
+        "Docker",
+        "Linux",
+        "Go"
+      ],
+      "expected_companies": [
+        "CloudWorks"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "AWS",
+        "Terraform",
+        "Java"
+      ],
+      "expected_metrics": [
+        "200+"
+      ]
+    }
+  },
+  {
+    "id": "case_24_jr_python",
+    "category": "Junior Python",
+    "resume_text": "LUCAS SILVA\nlucas.s@example.com | Miami, FL\nSUMMARY: Junior Python Developer building web scrapers and automation scripts with Python and PostgreSQL.\nEXPERIENCE:\nJunior Python Developer at AutoWeb (2023 - Present)\n- Developed automated data collection scripts in Python.\n- Stored structured data in PostgreSQL.\nSKILLS:\nLanguages: Python, SQL, PostgreSQL, Git\nEDUCATION:\nB.S. in Computer Science at FIU (2019 - 2023)",
+    "ground_truth": {
+      "expected_skills": [
+        "Python",
+        "SQL",
+        "PostgreSQL",
+        "Git"
+      ],
+      "expected_companies": [
+        "AutoWeb"
+      ],
+      "unsupported_claims": [
+        "FastAPI",
+        "Django",
+        "Docker",
+        "Kubernetes"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_25_tech_writer",
+    "category": "Developer Relations",
+    "resume_text": "OLIVIA BENNETT\nolivia.b@example.com | Portland, OR\nSUMMARY: Technical Writer creating clear API documentation, developer guides, and markdown tutorials.\nEXPERIENCE:\nSenior Technical Writer at DevDocs Inc (2021 - Present)\n- Authored REST API documentation and onboarding guides using Markdown.\n- Collaborated with engineering teams to document Python SDKs.\nSKILLS:\nDocs: Technical Writing, Markdown, Git, Python\nEDUCATION:\nB.A. in English at University of Oregon (2016 - 2020)",
+    "ground_truth": {
+      "expected_skills": [
+        "Technical Writing",
+        "Git",
+        "Python"
+      ],
+      "expected_companies": [
+        "DevDocs Inc"
+      ],
+      "unsupported_claims": [
+        "FastAPI",
+        "Docker",
+        "Kubernetes",
+        "React"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_26_cybersecurity",
+    "category": "Security Analyst",
+    "resume_text": "GABRIEL NGUYEN\ngabriel.n@example.com | Washington, DC\nSUMMARY: SOC Analyst monitoring threat telemetry, vulnerability triaging, and incident response on Linux networks.\nEXPERIENCE:\nSecurity Analyst at CyberShield (2022 - Present)\n- Monitored network security logs and triaged incident alerts.\n- Automated security analysis scripts in Python and Bash.\nSKILLS:\nSecurity: Cyber Security, Linux, Bash, Python, Network Security\nEDUCATION:\nB.S. in Cybersecurity at University of Maryland (2018 - 2022)",
+    "ground_truth": {
+      "expected_skills": [
+        "Linux",
+        "Bash",
+        "Python"
+      ],
+      "expected_companies": [
+        "CyberShield"
+      ],
+      "unsupported_claims": [
+        "AWS",
+        "Docker",
+        "Java",
+        "Kubernetes"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_27_enterprise_java",
+    "category": "Java Architecture",
+    "resume_text": "THOMAS SCHMIDT\nthomas.s@example.com | Milwaukee, WI\nSUMMARY: Principal Java Architect with 10 years designing high-throughput banking systems with Spring Boot.\nEXPERIENCE:\nPrincipal Java Engineer at BankPlatform (2018 - Present)\n- Engineered financial processing engines using Java, Spring Boot, and PostgreSQL.\n- Handled transactions exceeding $50M daily.\nSKILLS:\nJava Stack: Java, Spring Boot, PostgreSQL, Docker, Maven\nEDUCATION:\nB.S. in Computer Science at Marquette University (2010 - 2014)",
+    "ground_truth": {
+      "expected_skills": [
+        "Java",
+        "Spring Boot",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "expected_companies": [
+        "BankPlatform"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "FastAPI",
+        "Ruby",
+        "Golang"
+      ],
+      "expected_metrics": [
+        "$50M"
+      ]
+    }
+  },
+  {
+    "id": "case_28_nextjs_specialist",
+    "category": "Modern Web",
+    "resume_text": "ALEXA REYES\nalexa.r@example.com | San Francisco, CA\nSUMMARY: Frontend Engineer specializing in Next.js, Server Components, and TypeScript.\nEXPERIENCE:\nFrontend Engineer at WebScale App (2022 - Present)\n- Built e-commerce web platform using Next.js, React, and TypeScript.\n- Improved Core Web Vitals resulting in 35% faster page load times.\nSKILLS:\nFrontend: Next.js, React, TypeScript, Tailwind CSS, JavaScript\nEDUCATION:\nB.S. in Computer Science at UC Davis (2018 - 2022)",
+    "ground_truth": {
+      "expected_skills": [
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "JavaScript"
+      ],
+      "expected_companies": [
+        "WebScale App"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Docker",
+        "Kubernetes",
+        "Angular"
+      ],
+      "expected_metrics": [
+        "35%"
+      ]
+    }
+  },
+  {
+    "id": "case_29_bootcamper",
+    "category": "Bootcamper",
+    "resume_text": "JORDAN BLACK\njordan.b@example.com | Atlanta, GA\nSUMMARY: Full Stack Web Developer trained in modern JavaScript, React, Node.js, and MongoDB.\nPROJECTS:\nRecipe Sharing Web App (2023)\n- Built interactive single-page app with React and Node.js.\n- Deployed frontend to cloud hosting.\nSKILLS:\nLanguages & Tools: JavaScript, React, Node.js, HTML, CSS, Git\nEDUCATION:\nSoftware Engineering Certificate at Flatiron School (2023)\nB.A. in Communications at Georgia State (2017 - 2021)",
+    "ground_truth": {
+      "expected_skills": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "HTML",
+        "CSS",
+        "Git"
+      ],
+      "expected_companies": [
+        "Flatiron School"
+      ],
+      "unsupported_claims": [
+        "Python",
+        "Docker",
+        "AWS",
+        "Kubernetes"
+      ],
+      "expected_metrics": []
+    }
+  },
+  {
+    "id": "case_30_eng_manager",
+    "category": "Management",
+    "resume_text": "DANIEL THORNE\ndaniel.t@example.com | Seattle, WA\nSUMMARY: Engineering Manager with 8+ years leading cross-functional engineering teams in SaaS.\nEXPERIENCE:\nEngineering Manager at CloudSaaS (2020 - Present)\n- Managed 14 software engineers delivering platform infrastructure.\n- Mentored 4 engineers to senior promotions.\nLead Developer at WebCorp (2016 - 2020)\n- Architected web services using Python and PostgreSQL.\nSKILLS:\nLeadership & Tech: Engineering Management, Agile, Python, PostgreSQL, System Design\nEDUCATION:\nB.S. in Computer Science at University of Washington (2012 - 2016)",
+    "ground_truth": {
+      "expected_skills": [
+        "Agile",
+        "Python",
+        "PostgreSQL"
+      ],
+      "expected_companies": [
+        "CloudSaaS",
+        "WebCorp"
+      ],
+      "unsupported_claims": [
+        "C++",
+        "Java",
+        "Kubernetes",
+        "Rust"
+      ],
+      "expected_metrics": [
+        "14 software engineers"
+      ]
+    }
+  }
+]

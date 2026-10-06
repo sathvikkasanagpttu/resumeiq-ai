@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Sidebar, NavTab } from './components/Sidebar';
 import { DashboardPage } from './pages/DashboardPage';
+import { ResumeStudioPage } from './pages/ResumeStudioPage';
 import { ResumeIntelligencePage } from './pages/ResumeIntelligencePage';
 import { JobAnalyzerPage } from './pages/JobAnalyzerPage';
 import { MatchAnalysisPage } from './pages/MatchAnalysisPage';
 import { SkillGapsPage } from './pages/SkillGapsPage';
 import { ResumeOptimizerPage } from './pages/ResumeOptimizerPage';
 import { ApplicationGeneratorPage } from './pages/ApplicationGeneratorPage';
+import { ApplicationTrackerPage } from './pages/ApplicationTrackerPage';
+import { InterviewPrepPage } from './pages/InterviewPrepPage';
 import { CareerRoadmapPage } from './pages/CareerRoadmapPage';
 import { JobRecommendationsPage } from './pages/JobRecommendationsPage';
 import { MarketAnalyticsPage } from './pages/MarketAnalyticsPage';
@@ -68,6 +71,14 @@ export const App: React.FC = () => {
             />
           )}
 
+          {currentTab === 'resume-studio' && (
+            <ResumeStudioPage
+              selectedResumeId={selectedResumeId}
+              resumes={resumes}
+              onSelectResume={(id) => setSelectedResumeId(id)}
+            />
+          )}
+
           {currentTab === 'resume-intelligence' && (
             <ResumeIntelligencePage
               selectedResumeId={selectedResumeId}
@@ -116,6 +127,18 @@ export const App: React.FC = () => {
           {currentTab === 'application-generator' && (
             <ApplicationGeneratorPage
               selectedMatchId={selectedMatchId}
+            />
+          )}
+
+          {currentTab === 'application-tracker' && (
+            <ApplicationTrackerPage />
+          )}
+
+          {currentTab === 'interview-prep' && (
+            <InterviewPrepPage
+              selectedResumeId={selectedResumeId}
+              resumes={resumes}
+              onSelectResume={(id) => setSelectedResumeId(id)}
             />
           )}
 

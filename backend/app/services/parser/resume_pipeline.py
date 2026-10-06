@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Tuple
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 from app.services.parser.document_reader import DocumentReader
 from app.services.parser.section_detector import SectionDetector
 from app.services.parser.entity_extractor import EntityExtractor
@@ -159,15 +160,33 @@ class ResumePipeline:
             )
             db.add(db_ev)
 
-        # 12. Create Initial ResumeVersion
+        # 12. Build Canonical Profile & Initial ResumeVersion
+        from app.services.parser.canonical_builder import CanonicalProfileBuilder
+        canonical_profile = CanonicalProfileBuilder.build_from_parsed_data(
+            raw_text=raw_text,
+            contacts=contacts,
+            sections_dict=sections_dict,
+            skills=skills,
+            experiences=experiences,
+            projects=projects,
+            educations=educations,
+            certifications=certifications
+        )
+        canonical_dump = canonical_profile.model_dump()
+        new_parsed = dict(resume.parsed_data) if resume.parsed_data else {}
+        new_parsed["canonical_profile"] = canonical_dump
+        resume.parsed_data = new_parsed
+        flag_modified(resume, "parsed_data")
+
         version = ResumeVersion(
             resume_id=resume.id,
             version_num=1,
-            change_summary="Initial document upload and parsing",
-            content_snapshot={
-                "skills": [s.normalized_skill for s in skills],
-                "experiences": [{"role": e.role, "company": e.company} for e in experiences]
-            }
+            mode="clean_rebuild",
+            template_id="classic",
+            is_published=True,
+            change_summary="Initial document upload and Canonical Profile compilation",
+            content_snapshot=canonical_dump,
+            canonical_profile=canonical_dump
         )
         db.add(version)
 

@@ -68,10 +68,16 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <button
-              onClick={() => onNavigate('resume-intelligence')}
-              className="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-teal-600/20 transition flex items-center gap-2"
+              onClick={() => onNavigate('resume-studio')}
+              className="px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-teal-500/20 transition flex items-center gap-2"
             >
-              <FileText className="w-4 h-4" /> Upload / Inspect Resume
+              <Sparkles className="w-4 h-4" /> Auto Build Resume (Studio v2)
+            </button>
+            <button
+              onClick={() => onNavigate('resume-intelligence')}
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2"
+            >
+              <FileText className="w-4 h-4" /> Inspect Resume Evidence
             </button>
             <button
               onClick={() => onNavigate('job-analyzer')}

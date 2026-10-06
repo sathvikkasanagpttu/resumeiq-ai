@@ -286,3 +286,327 @@ export interface MarketAnalytics {
     summary: string;
   };
 }
+
+// ==========================================
+// RESUMEIQ V2 AUTO BUILDER & INTELLIGENCE TYPES
+// ==========================================
+
+export type SourceType = 'extracted' | 'user_confirmed' | 'ai_suggested_pending';
+
+export interface EvidenceSource {
+  source: SourceType;
+  source_span?: string;
+  confidence?: number;
+  is_verified?: boolean;
+}
+
+export interface ProfileLink {
+  label: string;
+  url: string;
+  platform?: string;
+}
+
+export interface ProfileBasics {
+  name: string;
+  email: string;
+  phone?: string;
+  location?: string;
+  summary?: string;
+  headline?: string;
+  links: ProfileLink[];
+  metadata?: EvidenceSource;
+}
+
+export interface ProfileBullet {
+  text: string;
+  original_text?: string;
+  source: SourceType;
+  evidence_ids?: string[];
+  change_reason?: string;
+  risk_flag?: string;
+}
+
+export interface ProfileExperience {
+  id: string;
+  company: string;
+  role: string;
+  location?: string;
+  start_date?: string;
+  end_date?: string;
+  is_current: boolean;
+  bullets: ProfileBullet[];
+  technologies: string[];
+  metadata?: EvidenceSource;
+}
+
+export interface ProfileProject {
+  id: string;
+  name: string;
+  role?: string;
+  description: string;
+  bullets: ProfileBullet[];
+  technologies: string[];
+  url?: string;
+  outcomes: string[];
+  metadata?: EvidenceSource;
+}
+
+export interface ProfileEducation {
+  id: string;
+  institution: string;
+  degree: string;
+  field_of_study?: string;
+  start_date?: string;
+  end_date?: string;
+  gpa?: string;
+  highlights: string[];
+  metadata?: EvidenceSource;
+}
+
+export interface ProfileSkill {
+  name: string;
+  category: string;
+  proficiency_level?: string;
+  source: SourceType;
+  evidence_ids?: string[];
+}
+
+export interface ProfileCertification {
+  name: string;
+  issuer: string;
+  date_obtained?: string;
+  credential_id?: string;
+  url?: string;
+  metadata?: EvidenceSource;
+}
+
+export interface ProfileAchievement {
+  title: string;
+  description: string;
+  date?: string;
+  metadata?: EvidenceSource;
+}
+
+export interface CanonicalProfile {
+  basics: ProfileBasics;
+  experience: ProfileExperience[];
+  projects: ProfileProject[];
+  education: ProfileEducation[];
+  skills: ProfileSkill[];
+  certifications: ProfileCertification[];
+  achievements: ProfileAchievement[];
+  languages: string[];
+  custom_sections: Record<string, any>;
+}
+
+export type BuilderMode = 'clean_rebuild' | 'role_targeted' | 'fresher' | 'experienced';
+export type BuilderTemplate = 'classic' | 'modern_minimal' | 'compact' | 'fresher';
+
+export interface GenerateResumeRequest {
+  resume_id: string;
+  mode: BuilderMode;
+  target_role?: string;
+  job_description_text?: string;
+  template_id: BuilderTemplate;
+  page_target: 1 | 2;
+}
+
+export interface ResumeDiffItem {
+  id: string;
+  version_id: string;
+  field_path: string;
+  original_text?: string;
+  proposed_text: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'edited';
+  edited_text?: string;
+  source: string;
+  evidence_ids: string[];
+  change_reason?: string;
+  risk_flag?: string;
+  created_at?: string;
+}
+
+export interface DiffReviewAction {
+  diff_id: string;
+  action: 'accept' | 'reject' | 'edit';
+  edited_text?: string;
+}
+
+export interface ResumeVersion {
+  id: string;
+  resume_id: string;
+  parent_version_id?: string;
+  version_num: number;
+  mode: string;
+  template_id: string;
+  is_published: boolean;
+  ats_loss_score: number;
+  change_summary?: string;
+  canonical_profile: CanonicalProfile;
+  diffs: ResumeDiffItem[];
+  rendered_html?: string;
+  created_at?: string;
+}
+
+// Missing-Info Wizard Types
+export interface WizardQuestion {
+  id: string;
+  category: 'summary' | 'metric' | 'link' | 'skill' | 'timeline_gap' | 'project_detail' | string;
+  target_entity_id?: string;
+  target_section: string;
+  prompt_text: string;
+  context_hint: string;
+  example_answers: string[];
+  has_metric_requested: boolean;
+}
+
+export interface WizardAnswer {
+  question_id: string;
+  answer_text: string;
+  confirmed_metric?: string;
+  confirmed_technologies?: string[];
+}
+
+export interface WizardSessionResponse {
+  resume_id: string;
+  total_questions: number;
+  questions: WizardQuestion[];
+  summary_message: string;
+}
+
+export interface WizardSubmitResponse {
+  resume_id: string;
+  facts_added_count: number;
+  message: string;
+  next_step: string;
+}
+
+// Quality & Gap Audit Types
+export interface QualityIssue {
+  issue_type: string;
+  severity: 'critical' | 'warning' | 'suggestion';
+  message: string;
+  target_section: string;
+  line_text?: string;
+  suggested_fix?: string;
+}
+
+export interface QualityComponentScore {
+  name: string;
+  score: number;
+  weight: number;
+  grade: string;
+  explanation: string;
+  issues: QualityIssue[];
+}
+
+export interface TimelineAnomaly {
+  anomaly_type: string;
+  severity: string;
+  company_or_entity: string;
+  dates: string;
+  description: string;
+  remediation_hint: string;
+}
+
+export interface TimelineAnalysisResult {
+  total_career_months: number;
+  total_career_years: number;
+  anomalies: TimelineAnomaly[];
+  has_critical_inconsistency: boolean;
+}
+
+export interface ImpliedSkillSuggestion {
+  implied_skill: string;
+  trigger_text: string;
+  context_section: string;
+  rationale: string;
+  suggested_question: string;
+}
+
+export interface ResumeQualityReport {
+  resume_id: string;
+  overall_quality_score: number;
+  readiness_tier: string;
+  components: QualityComponentScore[];
+  timeline_analysis: TimelineAnalysisResult;
+  representation_gaps: ImpliedSkillSuggestion[];
+  top_recommendations: string[];
+}
+
+export interface ExternalImportRequest {
+  resume_id: string;
+  platform: 'linkedin' | 'github';
+  raw_text: string;
+}
+
+export interface ExternalImportResponse {
+  status: string;
+  platform: string;
+  facts_imported: number;
+  message: string;
+}
+
+// Application Tracker Types
+export type TrackerStage = 'saved' | 'applied' | 'interviewing' | 'offer' | 'rejected';
+
+export interface TrackerItem {
+  id: string;
+  user_id: string;
+  job_title: string;
+  company_name: string;
+  stage: TrackerStage;
+  resume_version_id?: string;
+  target_job_id?: string;
+  notes?: string;
+  outcome?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface TrackerItemCreate {
+  job_title: string;
+  company_name: string;
+  resume_version_id?: string;
+  target_job_id?: string;
+  stage?: TrackerStage;
+  notes?: string;
+}
+
+export interface TrackerItemUpdate {
+  stage?: TrackerStage;
+  notes?: string;
+  outcome?: string;
+}
+
+// Interview Prep STAR Types
+export interface InterviewPrepQuestion {
+  id: string;
+  question: string;
+  category: string;
+  evidence_id?: string;
+  context_evidence: string;
+  star_skeleton: {
+    situation?: string;
+    task?: string;
+    action?: string;
+    result?: string;
+    architecture?: string;
+    trade_offs?: string;
+    impact?: string;
+  };
+}
+
+export interface InterviewPrepResponse {
+  id: string;
+  resume_id: string;
+  target_role: string;
+  total_questions: number;
+  questions: InterviewPrepQuestion[];
+}
+
+export interface InterviewPrepGenerateRequest {
+  resume_id: string;
+  target_role?: string;
+}
+

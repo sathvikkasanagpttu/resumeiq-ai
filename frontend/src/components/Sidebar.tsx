@@ -6,12 +6,15 @@ import {
 
 export type NavTab =
   | 'dashboard'
+  | 'resume-studio'
   | 'resume-intelligence'
   | 'job-analyzer'
   | 'match-analysis'
   | 'skill-gaps'
   | 'resume-optimizer'
   | 'application-generator'
+  | 'application-tracker'
+  | 'interview-prep'
   | 'career-roadmap'
   | 'job-recommendations'
   | 'market-analytics'
@@ -25,12 +28,15 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'resume-studio', label: 'Resume Studio v2', icon: Wand2, highlight: true },
     { id: 'resume-intelligence', label: 'Resume Intelligence', icon: FileText },
     { id: 'job-analyzer', label: 'Job Analyzer', icon: Briefcase },
     { id: 'match-analysis', label: 'Match Analysis', icon: GitCompare },
     { id: 'skill-gaps', label: 'Skill Gaps', icon: AlertTriangle },
-    { id: 'resume-optimizer', label: 'Resume Optimizer', icon: Wand2 },
-    { id: 'application-generator', label: 'Application Generator', icon: Send },
+    { id: 'application-tracker', label: 'Application Tracker', icon: Briefcase },
+    { id: 'interview-prep', label: 'Interview Prep STAR', icon: Sparkles },
+    { id: 'resume-optimizer', label: 'Match Optimizer', icon: Wand2 },
+    { id: 'application-generator', label: 'Cover Letter & Outreach', icon: Send },
     { id: 'career-roadmap', label: 'Career Roadmap', icon: Compass },
     { id: 'job-recommendations', label: 'Job Recommendations', icon: Sparkles },
     { id: 'market-analytics', label: 'Market Analytics', icon: BarChart3 },
@@ -50,14 +56,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
             <button
               key={item.id}
               onClick={() => onSelectTab(item.id as NavTab)}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 isActive
                   ? 'bg-teal-500/10 text-teal-400 border border-teal-500/30 shadow-sm'
+                  : item.highlight
+                  ? 'text-teal-300 hover:text-teal-200 hover:bg-teal-950/20 border border-teal-900/40'
                   : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-transparent'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-teal-400' : 'text-slate-500'}`} />
-              <span>{item.label}</span>
+              <div className="flex items-center gap-3">
+                <Icon className={`w-4 h-4 ${isActive ? 'text-teal-400' : item.highlight ? 'text-teal-400' : 'text-slate-500'}`} />
+                <span>{item.label}</span>
+              </div>
+              {item.highlight && !isActive && (
+                <span className="text-[9px] px-1.5 py-0.2 rounded font-mono font-bold bg-teal-500/20 text-teal-300">
+                  NEW
+                </span>
+              )}
             </button>
           );
         })}

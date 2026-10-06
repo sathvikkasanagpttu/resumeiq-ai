@@ -274,7 +274,51 @@ class SkillOntology:
             children=["GitHub Actions", "GitLab CI", "Jenkins"]
         ))
 
-        # 6. Frontend
+        self._add_node(SkillNode(
+            canonical_name="C++",
+            category="programming_language",
+            aliases=["cpp", "c/c++"],
+            related=["C", "Rust"],
+            transferable_to={"C": 0.90, "Rust": 0.60}
+        ))
+        self._add_node(SkillNode(
+            canonical_name="C",
+            category="programming_language",
+            aliases=["c programming", "c language"],
+            related=["C++", "Embedded Systems"],
+            transferable_to={"C++": 0.85}
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Swift",
+            category="programming_language",
+            aliases=["swiftui", "swift language"],
+            children=["SwiftUI", "iOS"],
+            related=["Kotlin", "Objective-C"],
+            transferable_to={"Kotlin": 0.80}
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Kotlin",
+            category="programming_language",
+            aliases=["android kotlin"],
+            children=["Android", "Jetpack Compose"],
+            related=["Java", "Swift"],
+            transferable_to={"Java": 0.90, "Swift": 0.80}
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Bash",
+            category="tools",
+            aliases=["shell", "sh", "bash scripting", "shell scripting"],
+            related=["Linux"],
+            transferable_to={"Linux": 0.90}
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Solidity",
+            category="programming_language",
+            aliases=["smart contracts"],
+            related=["Ethereum", "Web3"]
+        ))
+
+        # 6. Frontend & Mobile
         self._add_node(SkillNode(
             canonical_name="React",
             category="frontend",
@@ -293,13 +337,172 @@ class SkillOntology:
             transferable_to={"Remix": 0.85, "Nuxt.js": 0.75}
         ))
         self._add_node(SkillNode(
-            canonical_name="HTML/CSS",
+            canonical_name="HTML",
             category="frontend",
-            aliases=["html", "css", "html5", "css3", "tailwind", "sass"],
-            children=["Tailwind CSS", "Sass", "Bootstrap"]
+            aliases=["html5", "semantic html"],
+            related=["CSS"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="CSS",
+            category="frontend",
+            aliases=["css3", "styles"],
+            related=["HTML", "Tailwind CSS"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Tailwind CSS",
+            category="frontend",
+            aliases=["tailwind", "tailwindcss"],
+            parents=["CSS"],
+            related=["Bootstrap"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Redux",
+            category="frontend",
+            aliases=["redux toolkit"],
+            parents=["React"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Node.js",
+            category="backend_framework",
+            aliases=["nodejs", "node"],
+            parents=["JavaScript"],
+            children=["Express.js", "NestJS"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Express.js",
+            category="backend_framework",
+            aliases=["expressjs", "express js"],
+            parents=["Node.js"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Spring Boot",
+            category="backend_framework",
+            aliases=["spring", "spring framework"],
+            parents=["Java"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Android",
+            category="mobile",
+            aliases=["android os", "android sdk"],
+            related=["Kotlin", "Java"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="iOS",
+            category="mobile",
+            aliases=["ios sdk", "iphone"],
+            related=["Swift"]
         ))
 
-        # 7. Software Engineering Fundamentals
+        # 7. Data, Cloud, Testing & Infrastructure
+        self._add_node(SkillNode(
+            canonical_name="Linux",
+            category="tools",
+            aliases=["unix", "ubuntu", "debian", "centos", "redhat"],
+            related=["Bash"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Terraform",
+            category="devops",
+            aliases=["iac", "infrastructure as code"],
+            parents=["DevOps"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Ansible",
+            category="devops",
+            aliases=["configuration management"],
+            parents=["DevOps"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Prometheus",
+            category="devops",
+            aliases=["prometheus monitoring"],
+            related=["Grafana"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Grafana",
+            category="devops",
+            aliases=["grafana dashboards"],
+            related=["Prometheus"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="GitHub Actions",
+            category="devops",
+            aliases=["actions", "gh actions"],
+            parents=["CI/CD"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Selenium",
+            category="testing",
+            aliases=["selenium webdriver"],
+            related=["PyTest", "Cypress"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="PyTest",
+            category="testing",
+            aliases=["pytest framework"],
+            parents=["Python"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Apache Spark",
+            category="data_engineering",
+            aliases=["spark", "pyspark"],
+            parents=["Data Engineering"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Deep Learning",
+            category="machine_learning",
+            aliases=["neural networks"],
+            children=["PyTorch", "TensorFlow"]
+        ))
+
+        # 8. Design, Product, Management & Security
+        self._add_node(SkillNode(
+            canonical_name="Figma",
+            category="design",
+            aliases=["figma design"],
+            related=["UI/UX Design"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="UI/UX Design",
+            category="design",
+            aliases=["ui/ux", "ux design", "ui design"],
+            children=["Figma", "Wireframing"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Product Management",
+            category="management",
+            aliases=["product manager", "roadmapping"],
+            children=["Agile", "Scrum"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Agile",
+            category="management",
+            aliases=["agile methodologies", "scrum", "kanban"],
+            children=["Scrum", "Jira"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Jira",
+            category="tools",
+            aliases=["atlassian jira"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Cyber Security",
+            category="security",
+            aliases=["cybersecurity", "infosec", "information security"],
+            children=["Network Security"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Software Architecture",
+            category="architecture",
+            aliases=["system architecture", "software design"]
+        ))
+        self._add_node(SkillNode(
+            canonical_name="Technical Writing",
+            category="communication",
+            aliases=["documentation", "tech writing"]
+        ))
+
+        # 9. Fundamentals & Tools
         self._add_node(SkillNode(
             canonical_name="REST API",
             category="architecture",
@@ -311,7 +514,7 @@ class SkillOntology:
         self._add_node(SkillNode(
             canonical_name="System Design",
             category="architecture",
-            aliases=["microservices", "distributed systems", "software architecture"]
+            aliases=["microservices", "distributed systems"]
         ))
         self._add_node(SkillNode(
             canonical_name="Git",

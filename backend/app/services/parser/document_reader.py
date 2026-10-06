@@ -119,8 +119,8 @@ class DocumentReader:
         except Exception as e:
             raise DocumentParsingError(f"Malformed or unreadable PDF document: {str(e)}")
 
-    @staticmethod
-    def _read_docx(content: bytes) -> str:
+    @classmethod
+    def _read_docx(cls, content: bytes) -> str:
         try:
             stream = io.BytesIO(content)
             doc = docx.Document(stream)
@@ -136,19 +136,19 @@ class DocumentReader:
             full_text = "\n".join(paragraphs).strip()
             if not full_text:
                 raise DocumentParsingError("DOCX file contains no readable text")
-            return full_text
+            return cls._sanitize_extracted_text(full_text)
         except DocumentParsingError:
             raise
         except Exception as e:
             raise DocumentParsingError(f"Malformed DOCX file: {str(e)}")
 
-    @staticmethod
-    def _read_txt(content: bytes) -> str:
+    @classmethod
+    def _read_txt(cls, content: bytes) -> str:
         for encoding in ["utf-8", "utf-8-sig", "latin-1", "cp1252"]:
             try:
                 text = content.decode(encoding).strip()
                 if text:
-                    return text
+                    return cls._sanitize_extracted_text(text)
             except UnicodeDecodeError:
                 continue
         raise DocumentParsingError("Could not decode text file with standard encodings")

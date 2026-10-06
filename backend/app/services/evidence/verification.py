@@ -118,7 +118,7 @@ class VerificationPipeline:
         
         # Check all known tech terms mentioned in generated text
         for alias_lower, canonical in ontology.alias_to_canonical.items():
-            pattern = r"\b" + re.escape(alias_lower) + r"\b"
+            pattern = r"(?<!\w)" + re.escape(alias_lower) + r"(?!\w)"
             if re.search(pattern, generated_text, re.IGNORECASE):
                 claim_result = cls.verify_claim(
                     resume=resume,

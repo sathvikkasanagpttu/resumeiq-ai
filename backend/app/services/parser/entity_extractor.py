@@ -70,7 +70,7 @@ class EntityExtractor:
 
         # Check every known canonical skill and alias in the ontology
         for alias_lower, canonical in ontology.alias_to_canonical.items():
-            pattern = r"\b" + re.escape(alias_lower) + r"\b"
+            pattern = r"(?<!\w)" + re.escape(alias_lower) + r"(?!\w)"
             
             # Search across sentences for rich context
             for sentence in sentences:
@@ -170,7 +170,7 @@ class EntityExtractor:
             # Detect technologies in this experience
             techs = []
             for alias_lower, canonical in ontology.alias_to_canonical.items():
-                if re.search(r"\b" + re.escape(alias_lower) + r"\b", block, re.IGNORECASE):
+                if re.search(r"(?<!\w)" + re.escape(alias_lower) + r"(?!\w)", block, re.IGNORECASE):
                     if canonical not in techs:
                         techs.append(canonical)
 
@@ -216,7 +216,7 @@ class EntityExtractor:
             
             techs = []
             for alias_lower, canonical in ontology.alias_to_canonical.items():
-                if re.search(r"\b" + re.escape(alias_lower) + r"\b", block, re.IGNORECASE):
+                if re.search(r"(?<!\w)" + re.escape(alias_lower) + r"(?!\w)", block, re.IGNORECASE):
                     if canonical not in techs:
                         techs.append(canonical)
 

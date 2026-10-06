@@ -1,6 +1,11 @@
 import {
   Resume, Job, Match, SkillGapReport, ResumeOptimization,
-  GeneratedMaterial, CareerRoadmap, JobRecommendation, MarketAnalytics
+  GeneratedMaterial, CareerRoadmap, JobRecommendation, MarketAnalytics,
+  GenerateResumeRequest, ResumeVersion, ResumeDiffItem, DiffReviewAction,
+  WizardSessionResponse, WizardAnswer, WizardSubmitResponse,
+  ResumeQualityReport, ExternalImportRequest, ExternalImportResponse,
+  TrackerItem, TrackerItemCreate, TrackerItemUpdate,
+  InterviewPrepResponse, InterviewPrepGenerateRequest
 } from '../types';
 
 const BASE_URL = '/api/v1';
@@ -212,5 +217,147 @@ export const api = {
   async getHealth() {
     const res = await fetch(`${BASE_URL}/health`);
     return handleResponse<{ status: string; database_connected: boolean; ai_engine_ready: boolean }>(res);
+  },
+
+  // ==========================================
+  // RESUMEIQ V2 BUILDER & CAREER INTELLIGENCE
+  // ==========================================
+
+  // Auto Resume Generation & Versions
+  async generateResumeVersion(req: GenerateResumeRequest): Promise<ResumeVersion> {
+    const res = await fetch(`${BASE_URL}/builder/generate`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<ResumeVersion>(res);
+  },
+
+  async listResumeVersions(resumeId: string): Promise<ResumeVersion[]> {
+    const res = await fetch(`${BASE_URL}/builder/versions/${resumeId}`, {
+      headers: getHeaders()
+    });
+    return handleResponse<ResumeVersion[]>(res);
+  },
+
+  async getResumeVersion(versionId: string): Promise<ResumeVersion> {
+    const res = await fetch(`${BASE_URL}/builder/version/${versionId}`, {
+      headers: getHeaders()
+    });
+    return handleResponse<ResumeVersion>(res);
+  },
+
+  async reviewBulletDiff(req: DiffReviewAction): Promise<ResumeDiffItem> {
+    const res = await fetch(`${BASE_URL}/builder/diff/review`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<ResumeDiffItem>(res);
+  },
+
+  // Missing-Info Wizard
+  async getWizardQuestions(resumeId: string): Promise<WizardSessionResponse> {
+    const res = await fetch(`${BASE_URL}/builder/wizard/questions/${resumeId}`, {
+      headers: getHeaders()
+    });
+    return handleResponse<WizardSessionResponse>(res);
+  },
+
+  async submitWizardAnswers(resumeId: string, answers: WizardAnswer[]): Promise<WizardSubmitResponse> {
+    const res = await fetch(`${BASE_URL}/builder/wizard/answers`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ resume_id: resumeId, answers })
+    });
+    return handleResponse<WizardSubmitResponse>(res);
+  },
+
+  // Quality Audit & External Import
+  async getQualityReport(resumeId: string): Promise<ResumeQualityReport> {
+    const res = await fetch(`${BASE_URL}/builder/quality/${resumeId}`, {
+      headers: getHeaders()
+    });
+    return handleResponse<ResumeQualityReport>(res);
+  },
+
+  async importExternalProfile(req: ExternalImportRequest): Promise<ExternalImportResponse> {
+    const res = await fetch(`${BASE_URL}/builder/import-external`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<ExternalImportResponse>(res);
+  },
+
+  // Multi-Format Export
+  async downloadResumeExport(versionId: string, format: string = 'pdf', redactPii: boolean = false): Promise<void> {
+    const url = `${BASE_URL}/builder/export/${versionId}?format=${format}&redact_pii=${redactPii}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) {
+      throw new Error(`Export failed: ${res.statusText}`);
+    }
+    const blob = await res.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = `resume_${versionId}_${redactPii ? 'redacted_' : ''}.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(downloadUrl);
+    document.body.removeChild(a);
+  },
+
+  async getResumeExportHtml(versionId: string, redactPii: boolean = false): Promise<string> {
+    const url = `${BASE_URL}/builder/export/${versionId}?format=html&redact_pii=${redactPii}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) {
+      throw new Error(`HTML export failed: ${res.statusText}`);
+    }
+    return res.text();
+  },
+
+  // Application Tracker
+  async listTrackerItems(): Promise<TrackerItem[]> {
+    const res = await fetch(`${BASE_URL}/builder/tracker`, {
+      headers: getHeaders()
+    });
+    return handleResponse<TrackerItem[]>(res);
+  },
+
+  async createTrackerItem(req: TrackerItemCreate): Promise<TrackerItem> {
+    const res = await fetch(`${BASE_URL}/builder/tracker`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<TrackerItem>(res);
+  },
+
+  async updateTrackerItem(itemId: string, req: TrackerItemUpdate): Promise<TrackerItem> {
+    const res = await fetch(`${BASE_URL}/builder/tracker/${itemId}`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<TrackerItem>(res);
+  },
+
+  async deleteTrackerItem(itemId: string): Promise<{ status: string; message: string }> {
+    const res = await fetch(`${BASE_URL}/builder/tracker/${itemId}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    return handleResponse<{ status: string; message: string }>(res);
+  },
+
+  // Interview Prep STAR
+  async generateInterviewPrep(req: InterviewPrepGenerateRequest): Promise<InterviewPrepResponse> {
+    const res = await fetch(`${BASE_URL}/builder/interview-prep`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(req)
+    });
+    return handleResponse<InterviewPrepResponse>(res);
   }
 };
