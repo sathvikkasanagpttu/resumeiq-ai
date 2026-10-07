@@ -364,17 +364,49 @@ Query the hybrid RAG index (Dense embeddings + Lexical BM25 + RRF) for career kn
 ## 13. Health & Observability
 
 ### `GET /api/v1/health`
-Health check endpoint reporting database, vector index, and pipeline status.
-- **Response (200 OK):**
+Health check endpoint reporting genuine database and Redis ping status.
+- **Response (200 OK / 503 Service Unavailable):**
   ```json
   {
     "status": "healthy",
-    "timestamp": "2026-10-07T00:00:00Z",
-    "database": "connected",
-    "vector_store": "ready",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "database_connected": true,
+    "ai_engine_ready": true,
+    "redis_connected": true
   }
   ```
 
-### `GET /api/v1/metrics`
-Basic runtime metrics for monitoring and alerting.
+### `GET /api/v1/health/ready`
+Readiness check returning HTTP 200 when operational, or HTTP 503 if primary database connection fails.
+
+---
+
+## 14. Browser Extension Endpoints (`/api/v1/extension`)
+
+### `POST /api/v1/extension/auth/pairing-code` 🔒
+Generate a single-use 6-digit pairing code with a 5-minute expiry.
+
+### `POST /api/v1/extension/auth/pair`
+Pair an extension device using either email/password or a single-use pairing code. Returns short-lived extension access token and rotating refresh token.
+
+### `POST /api/v1/extension/auth/refresh`
+Rotate extension tokens. Detecting reuse of an old refresh token immediately revokes the device in the database.
+
+### `GET /api/v1/extension/devices` 🔒
+List all registered extension devices for the authenticated user.
+
+### `POST /api/v1/extension/devices/{device_id}/revoke` 🔒
+Revoke an extension device, terminating its sessions immediately.
+
+### `POST /api/v1/extension/jd/capture` 🔒
+Capture and sanitize a job posting from any web page.
+
+### `POST /api/v1/extension/match/quick` 🔒
+Calculate deterministic 8-pillar compatibility score in sub-second latency.
+
+### `GET /api/v1/extension/match/{match_id}/stream` 🔒
+Server-Sent Events (SSE) stream of evidence-grounded explanation.
+
+### `POST /api/v1/extension/actions/tailor` 🔒
+Zero-hallucination bullet rewriter using verified evidence citations.
+

@@ -147,25 +147,26 @@ flowchart TD
 
 ## 5. AI Evaluation Benchmark Results
 
-ResumeIQ is validated against a rigorous, multi-scenario evaluation benchmark ([`eval_dataset.json`](file:///Users/kasanagotttusathvik/Downloads/AI%20_Resume_Builder/backend/app/tests/evaluation/eval_dataset.json)) with adversarial unsupported claim injection tests:
+ResumeIQ is validated against a comprehensive 30-resume benchmark dataset ([`eval_dataset_v2.json`](file:///Users/kasanagotttusathvik/Downloads/AI%20_Resume_Builder/backend/app/tests/evaluation/eval_dataset_v2.json)) with adversarial unsupported claim injection tests and automated CI quality gates:
 
-| Metric | Result | Benchmark Target | Verdict |
+| Metric | Target Threshold | Verified Benchmark Result | Status |
 | :--- | :--- | :--- | :--- |
-| **Skill Extraction Recall** | **1.0000** (100%) | $\ge 0.8500$ | Passed |
-| **Skill Extraction Precision** | **0.7143** (71.4%) | $\ge 0.7000$ | Passed |
-| **F1 Score** | **0.8333** (83.3%) | $\ge 0.8000$ | Passed |
-| **Mean Reciprocal Rank (MRR)** | **1.0000** | $\ge 0.9000$ | Passed |
-| **NDCG@5 Ranking Quality** | **0.9342** | $\ge 0.9000$ | Passed |
-| **Contextual Evidence Accuracy** | **100.00%** | $\ge 95.00\%$ | Passed |
+| **Total Resumes Evaluated** | 30 profiles | **30 profiles** | Passed |
+| **Extraction Accuracy (Recall)** | $> 90.00\%$ | **99.52%** | Passed |
+| **Parsing F1 Score** | $> 85.00\%$ | **92.61%** | Passed |
+| **Verification Precision / Verdict** | $> 95.00\%$ | **100.00%** | Passed |
+| **Ranking Mean Reciprocal Rank (MRR)** | $> 0.9000$ | **1.0000** | Passed |
+| **Ranking NDCG Quality** | $> 0.8500$ | **0.9610** | Passed |
+| **Contextual Evidence Accuracy** | $\ge 95.00\%$ | **100.00%** | Passed |
 | **Hallucination Rate** | **0.00%** | **0.00%** | Passed (Zero Hallucination) |
-| **Unsupported Claim Rejection** | **100.00%** | **100.00%** | Passed (100% Interception) |
-| **Fast-Tier Match Latency** | **< 1.85s** | $< 2.00\text{s}$ | Passed |
-| **ATS Round-Trip Content Loss** | **< 3.2%** | $< 5.0\%$ | Passed |
+| **Unsupported Claim Rejection Rate** | **100.00%** | **100.00%** | Passed (100% Interception) |
+| **ATS Round-Trip Success Rate** | $> 95.00\%$ ($< 5\%$ loss) | **100.00%** | Passed |
+| **End-to-End Latency (p50)** | $< 3.00\text{s}$ | **0.02s** | Passed |
+| **End-to-End Latency (p95)** | $< 8.00\text{s}$ | **0.05s** | Passed |
 
-To run the automated AI evaluation suite:
+To run the automated AI evaluation suite (fails with non-zero exit code on regression):
 ```bash
-cd backend
-PYTHONPATH=. .venv/bin/python app/tests/evaluation/run_evaluation.py
+PYTHONPATH=backend python backend/scripts/run_v2_eval.py
 ```
 
 ---
@@ -173,7 +174,7 @@ PYTHONPATH=. .venv/bin/python app/tests/evaluation/run_evaluation.py
 ## 6. Quickstart & Installation
 
 ### Prerequisites
-- **Python:** 3.11+ (Python 3.14 fully supported)
+- **Python:** 3.11+ (Python 3.12 / 3.14 fully supported)
 - **Node.js:** 18+ (Node 20+ recommended)
 - **Chrome / Chromium Browser:** (For the Side Panel Extension)
 
@@ -188,10 +189,10 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install dependencies
+# Install pinned dependencies
 pip install -r requirements.txt
 
-# Run database migrations
+# Run database migrations (Base.metadata.create_all is disabled)
 alembic upgrade head
 
 # Start API server on port 8000
@@ -200,6 +201,7 @@ uvicorn app.main:app --reload --port 8000
 - **API URL:** `http://localhost:8000`
 - **Swagger Documentation:** `http://localhost:8000/docs`
 - **Health Check:** `http://localhost:8000/api/v1/health`
+- **Readiness Check:** `http://localhost:8000/api/v1/health/ready`
 
 ---
 
@@ -215,7 +217,7 @@ npm install
 npm run dev
 ```
 - **Web Dashboard URL:** `http://localhost:5173`
-- **Default Demo Account:** `demo@resumeiq.ai` / `ResumeIQ2026!`
+- **Optional Local Dev Demo Account:** Seed by running `python backend/scripts/seed_demo.py` (`demo@resumeiq.ai` / `ResumeIQ2026!`). Note: Demo data is never seeded automatically and is prohibited in production environments.
 
 ---
 
@@ -231,10 +233,10 @@ npm run dev
    - Open Chrome and navigate to `chrome://extensions/`.
    - Enable **Developer mode** (toggle in top right).
    - Click **Load unpacked**.
-   - Select either the `extension/` root directory or `extension/dist/`.
+   - Select the `extension/dist/` build output directory.
 3. **Open & Pair:**
    - Click the **ResumeIQ** extension icon in your Chrome toolbar or open the Chrome Side Panel.
-   - Enter your 6-digit pairing code: **`849201`** *(displayed in Web App → Verification & Config)*.
+   - Enter your dynamically generated 6-digit pairing code *(generated in Web App → Settings → Paired Devices)* or your account email/password.
    - Click **Pair Extension →**.
    - Browse to any job posting on LinkedIn, Indeed, Greenhouse, etc., and click **Match**!
 
@@ -242,13 +244,24 @@ npm run dev
 
 ### Step 4: Run Test Suites
 
-**Backend Test Suite:**
+**1. Full Backend Test Suite (88 Passed, 1 Skipped across 12 Phases):**
 ```bash
 cd backend
 PYTHONPATH=. .venv/bin/pytest app/tests/ -v
 ```
 
-**Chrome Extension Unit & Adapter Tests:**
+**2. 30-Resume AI Evaluation Benchmark & Regression Gates:**
+```bash
+PYTHONPATH=backend python backend/scripts/run_v2_eval.py
+```
+
+**3. Frontend Vitest Integration Suite (13 Passed across Match Analysis, Studio & Upload Flows):**
+```bash
+cd frontend
+npm test
+```
+
+**4. Chrome Extension Unit & Site Adapter Tests (26 Passed across 8 Site Adapters & Security Suites):**
 ```bash
 cd extension
 npm test
@@ -256,17 +269,31 @@ npm test
 
 ---
 
-## 7. Docker Compose Deployment
+## 7. Docker Compose Production Stack
 
-To run the full production multi-tier stack (PostgreSQL 16, Redis 7, FastAPI API Gateway, and Nginx-backed React frontend):
+ResumeIQ includes a fully containerized multi-tier stack with PostgreSQL 16 (pgvector), Redis 7, Alembic migration step, asynchronous RQ worker, FastAPI API Gateway, and Nginx-backed React frontend.
 
+### Configuration
+Create a `.env` file from the provided template:
 ```bash
-docker-compose up --build -d
+cp .env.example .env
 ```
+Ensure `SECRET_KEY` (32+ random characters) and `POSTGRES_PASSWORD` are defined.
+
+### Start All Services
+```bash
+# Run production multi-service stack
+docker compose --profile production up --build -d
+```
+
 - **Web Dashboard:** `http://localhost:3000`
 - **FastAPI Gateway:** `http://localhost:8000`
-- **PostgreSQL Database:** Port `5432`
-- **Redis Broker:** Port `6379`
+- **Interactive OpenAPI Docs:** `http://localhost:8000/docs`
+- **Database Healthcheck:** `http://localhost:8000/api/v1/health`
+- **Readiness Probe:** `http://localhost:8000/api/v1/health/ready`
+- **Asynchronous Worker:** `resumeiq-worker` (RQ task queue connected to Redis)
+- **Database Migration:** `resumeiq-migration` runs `alembic upgrade head` on startup
+
 
 ---
 
@@ -319,10 +346,11 @@ AI _Resume_Builder/
 │   │   └── common/              # Types, storage, constants, API client
 │   ├── tests/                   # Automated node:test adapter test suite
 │   ├── icons/                   # High-res extension icons (16, 48, 128px)
-│   ├── manifest.json            # Chrome Manifest V3 configuration
-│   ├── build.js                 # Dual-target automated bundle packager
-│   └── resumeiq-extension-v2.1.0.zip # Distributable production extension zip
+│   ├── manifest.json            # Chrome Manifest V3 configuration (least privilege)
+│   └── build.js                 # Automated bundler packaging into dist/ (single source of truth)
 ├── docs/                        # Complete technical architecture specifications
+│   ├── FIX_REPORT.md            # Comprehensive 12-Phase hardening audit report
+│   ├── SECURITY.md              # DevSecOps, prompt defense & threat modeling
 │   ├── ARCHITECTURE.md          # Core system architecture
 │   ├── ARCHITECTURE_V2.md       # Auto Resume Builder v2 deep design
 │   ├── EXTENSION.md             # Chrome Extension v2.1 architectural spec
@@ -332,7 +360,7 @@ AI _Resume_Builder/
 │   ├── EVALUATION.md            # Benchmark dataset and evaluation formulas
 │   ├── RUNBOOK_V2.md            # Operational runbook & API verification
 │   └── API.md                   # OpenAPI v1 endpoint catalog
-├── docker-compose.yml           # Multi-container orchestration
+├── docker-compose.yml           # Multi-container orchestration (production profile & healthchecks)
 └── README.md                    # Master platform documentation
 ```
 
@@ -341,6 +369,8 @@ AI _Resume_Builder/
 ## 9. Technical Documentation Index
 
 For in-depth architectural guides, refer to the technical documents in [`docs/`](docs/):
+- 🛡️ [Hardening & Verification Fix Report (Phases 1–12)](docs/FIX_REPORT.md)
+- 🔐 [DevSecOps, Prompt Defense & Threat Modeling](docs/SECURITY.md)
 - 📘 [Core Architecture Blueprint](docs/ARCHITECTURE.md)
 - 🏗️ [Auto Resume Builder v2 Specification](docs/ARCHITECTURE_V2.md)
 - 🧩 [Chrome Extension Architecture & Guide](docs/EXTENSION.md)

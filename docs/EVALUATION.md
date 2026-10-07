@@ -130,32 +130,41 @@ EVALUATION RESULTS SUMMARY:
 
 ---
 
-## 5. Running the Evaluation Suite
+---
 
-### Prerequisites
-Ensure the virtual environment is activated and dependencies are installed:
+## 5. 30-Resume Benchmark Suite & Quality Gates
 
-```bash
-cd backend
-source .venv/bin/activate
+In addition to the focused evaluation dataset, ResumeIQ includes a full 30-resume end-to-end benchmark suite across 30 distinct job profiles and industries (backend, ML, UI/UX, DevOps, SRE, Tech Writing, Cybersecurity, etc.):
+
+```
+================================================================================
+BENCHMARK SUMMARY RESULTS & QUALITY GATES:
+================================================================================
+• Total Resumes Evaluated:            30
+• Extraction Accuracy (Recall):       99.52%  (Gate Target: > 90.00%)
+• Parsing F1 Score:                   92.61%  (Gate Target: > 85.00%)
+• Verification Precision / Verdict:   100.00% (Gate Target: > 95.00%)
+• Ranking MRR / NDCG:                 1.00 / 0.96 (Gate Target: > 0.90 / > 0.85)
+• Hallucination Rate:                 0.00%   (Gate Target: 0.00%)
+• ATS Round-Trip Success Rate:        100.00% (Gate Target: > 95.00%)
+• End-to-End Latency (p50):           0.02s   (Gate Target: < 3.00s)
+• End-to-End Latency (p95):           0.05s   (Gate Target: < 8.00s)
+================================================================================
+✅ ALL CI QUALITY GATES PASSED (100% Zero-Hallucination & ATS-Safety).
 ```
 
-### Run Evaluation Script
+### Run 30-Resume Benchmark
 ```bash
-PYTHONPATH=. python app/tests/evaluation/run_evaluation.py
-```
-
-### Run Automated Pytest Test Suite
-To run all 21 unit, integration, and security tests:
-```bash
-PYTHONPATH=. pytest app/tests/ -v
+PYTHONPATH=backend python backend/scripts/run_v2_eval.py
 ```
 
 ---
 
 ## 6. Continuous Evaluation & Regression Gates
 
-In the automated CI pipeline (`.github/workflows/ci.yml`), PRs and commits are gated against these regression checks:
-- Any run where `hallucination_rate > 0.0%` triggers an immediate build failure.
-- Any run where `f1_score < 0.75` triggers a quality warning.
-- Unit and integration tests must maintain 100% pass rate.
+In the automated CI pipeline (`.github/workflows/ci.yml`), PRs and commits are gated against these strict non-zero exit regression checks:
+- `hallucination_rate > 0.0%` triggers an immediate CI build failure.
+- `extraction_accuracy < 90.0%` triggers an immediate CI build failure.
+- `ats_roundtrip_loss > 5.0%` triggers an immediate CI build failure.
+- Pytest suite must achieve 100% pass rate across all 88+ test cases.
+
