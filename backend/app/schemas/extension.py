@@ -29,6 +29,22 @@ class TokenRefreshRequest(BaseModel):
     refresh_token: str
     device_id: str
 
+class PairingCodeResponse(BaseModel):
+    pairing_code: str
+    expires_at: datetime
+    expires_in_seconds: int
+
+class ExtensionDeviceResponse(BaseModel):
+    id: str
+    device_id: str
+    device_name: Optional[str] = None
+    created_at: datetime
+    last_used_at: datetime
+    revoked_at: Optional[datetime] = None
+    is_revoked: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
 # ==========================================
 # JD CAPTURE & PROVENANCE
 # ==========================================

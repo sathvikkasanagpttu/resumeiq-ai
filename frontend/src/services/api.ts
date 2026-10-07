@@ -359,5 +359,27 @@ export const api = {
       body: JSON.stringify(req)
     });
     return handleResponse<InterviewPrepResponse>(res);
+  },
+
+  // Extension Pairing & Devices
+  async generatePairingCode(): Promise<{ pairing_code: string; expires_at: string; expires_in_seconds: number }> {
+    const res = await fetch(`${BASE_URL}/extension/auth/pairing-code`, {
+      method: 'POST',
+      headers: getHeaders()
+    });
+    return handleResponse(res);
+  },
+
+  async listExtensionDevices(): Promise<Array<{ id: string; device_id: string; device_name: string; created_at: string; last_used_at: string; revoked_at: string | null; is_revoked: boolean }>> {
+    const res = await fetch(`${BASE_URL}/extension/devices`, { headers: getHeaders() });
+    return handleResponse(res);
+  },
+
+  async revokeExtensionDevice(deviceId: string): Promise<{ status: string; message: string }> {
+    const res = await fetch(`${BASE_URL}/extension/devices/${encodeURIComponent(deviceId)}/revoke`, {
+      method: 'POST',
+      headers: getHeaders()
+    });
+    return handleResponse(res);
   }
 };

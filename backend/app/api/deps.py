@@ -1,5 +1,5 @@
 from typing import Generator, Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -10,6 +10,7 @@ from app.models.user import User
 security_bearer = HTTPBearer(auto_error=False)
 
 def get_current_user(
+    request: Request,
     auth: Optional[HTTPAuthorizationCredentials] = Depends(security_bearer),
     db: Session = Depends(get_db)
 ) -> User:
@@ -35,6 +36,15 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token payload missing user identifier",
             headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    # Enforce scope: extension tokens are limited strictly to extension endpoints
+    scope = payload.get("scope", "web")
+    path = request.url.path
+    if scope == "extension" and not path.startswith("/api/v1/extension"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: extension tokens are restricted to extension endpoints"
         )
     
     user = db.query(User).filter(User.id == user_id).first()

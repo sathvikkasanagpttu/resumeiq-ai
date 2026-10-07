@@ -13,6 +13,7 @@ from app.models.matching import (
 )
 from app.models.rag import KnowledgeDocument, KnowledgeChunk
 from app.models.audit import ModelRun, AuditLog, BackgroundTask
+from app.models.extension import ExtensionDevice, ExtensionPairingCode
 
 __all__ = [
     "Base",

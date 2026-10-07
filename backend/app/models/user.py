@@ -25,6 +25,8 @@ class User(Base):
     applications = relationship("Application", back_populates="user", cascade="all, delete-orphan")
     generated_documents = relationship("GeneratedDocument", back_populates="user", cascade="all, delete-orphan")
     audit_logs = relationship("AuditLog", back_populates="user", cascade="all, delete-orphan")
+    extension_devices = relationship("ExtensionDevice", back_populates="user", cascade="all, delete-orphan")
+    pairing_codes = relationship("ExtensionPairingCode", back_populates="user", cascade="all, delete-orphan")
 
 class CandidateProfile(Base):
     __tablename__ = "candidate_profiles"
