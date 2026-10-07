@@ -37,10 +37,10 @@ class ResumeVersion(Base):
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     resume_id = Column(String(36), ForeignKey("resumes.id", ondelete="CASCADE"), nullable=False, index=True)
-    parent_version_id = Column(String(36), ForeignKey("resume_versions.id", ondelete="SET NULL"), nullable=True)
+    parent_version_id = Column(String(36), ForeignKey("resume_versions.id", ondelete="SET NULL"), nullable=True, index=True)
     version_num = Column(Integer, nullable=False, default=1)
     mode = Column(String(50), default="clean_rebuild")  # clean_rebuild, role_targeted, fresher, experienced
-    target_job_id = Column(String(36), ForeignKey("jobs.id", ondelete="SET NULL"), nullable=True)
+    target_job_id = Column(String(36), ForeignKey("jobs.id", ondelete="SET NULL"), nullable=True, index=True)
     template_id = Column(String(50), default="classic")  # classic, modern_minimal, compact, fresher
     is_published = Column(Boolean, default=False)
     ats_loss_score = Column(Float, default=0.0)
@@ -148,13 +148,13 @@ class ResumeDiffItem(Base):
     field_path = Column(String(255), nullable=False)  # e.g. "experiences[0].bullet_points[1]"
     original_text = Column(Text, nullable=True)
     proposed_text = Column(Text, nullable=False)
-    status = Column(String(30), default="pending")  # pending, accepted, rejected, edited
+    status = Column(String(30), default="pending", nullable=False)  # pending, accepted, rejected, edited
     edited_text = Column(Text, nullable=True)
-    source = Column(String(50), default="ai_suggested_pending")  # extracted, user_confirmed, ai_suggested_pending
+    source = Column(String(50), default="ai_suggested_pending", nullable=False)  # extracted, user_confirmed, ai_suggested_pending
     evidence_ids = Column(JSON, default=list)  # list of evidence IDs
     change_reason = Column(Text, nullable=True)
     risk_flag = Column(String(50), nullable=True)  # needs_user_verification, safe_enhancement
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     version = relationship("ResumeVersion", back_populates="diffs")
 
@@ -167,30 +167,30 @@ class UserConfirmedFact(Base):
     fact_category = Column(String(50), nullable=False)  # metric, outcome, skill, date, link, responsibility
     field_target = Column(String(100), nullable=True)
     claim_text = Column(Text, nullable=False)
-    verification_source = Column(String(50), default="wizard_answer")  # wizard_answer, live_editor, external_import
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    verification_source = Column(String(50), default="wizard_answer", nullable=False)  # wizard_answer, live_editor, external_import
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
 class ApplicationTrackerItem(Base):
     __tablename__ = "application_tracker"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    job_id = Column(String(36), ForeignKey("jobs.id", ondelete="SET NULL"), nullable=True)
-    resume_version_id = Column(String(36), ForeignKey("resume_versions.id", ondelete="SET NULL"), nullable=True)
+    job_id = Column(String(36), ForeignKey("jobs.id", ondelete="SET NULL"), nullable=True, index=True)
+    resume_version_id = Column(String(36), ForeignKey("resume_versions.id", ondelete="SET NULL"), nullable=True, index=True)
     company = Column(String(255), nullable=False)
     role_title = Column(String(255), nullable=False)
-    status = Column(String(50), default="saved")  # saved, applied, interviewing, offer, rejected
+    status = Column(String(50), default="saved", nullable=False)  # saved, applied, interviewing, offer, rejected
     applied_date = Column(DateTime, nullable=True)
     outcome_notes = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
 
 class InterviewPrepSession(Base):
     __tablename__ = "interview_prep_sessions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    job_id = Column(String(36), ForeignKey("jobs.id", ondelete="CASCADE"), nullable=True)
-    resume_id = Column(String(36), ForeignKey("resumes.id", ondelete="CASCADE"), nullable=False)
+    job_id = Column(String(36), ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False, index=True)
+    resume_id = Column(String(36), ForeignKey("resumes.id", ondelete="CASCADE"), nullable=False, index=True)
     qa_pairs = Column(JSON, default=list)  # list of question, category, star_skeleton, cited_evidence_ids
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)

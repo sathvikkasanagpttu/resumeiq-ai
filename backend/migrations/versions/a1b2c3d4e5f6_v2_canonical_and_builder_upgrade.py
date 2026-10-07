@@ -29,6 +29,8 @@ def upgrade() -> None:
         batch_op.add_column(sa.Column('rendered_html', sa.Text(), nullable=True))
         batch_op.create_foreign_key('fk_resume_versions_parent', 'resume_versions', ['parent_version_id'], ['id'], ondelete='SET NULL')
         batch_op.create_foreign_key('fk_resume_versions_target_job', 'jobs', ['target_job_id'], ['id'], ondelete='SET NULL')
+        batch_op.create_index('ix_resume_versions_parent_version_id', ['parent_version_id'], unique=False)
+        batch_op.create_index('ix_resume_versions_target_job_id', ['target_job_id'], unique=False)
 
     # 2. Create resume_diff_items table
     op.create_table(
@@ -65,8 +67,8 @@ def upgrade() -> None:
         'application_tracker',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('user_id', sa.String(36), sa.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True),
-        sa.Column('job_id', sa.String(36), sa.ForeignKey('jobs.id', ondelete='SET NULL'), nullable=True),
-        sa.Column('resume_version_id', sa.String(36), sa.ForeignKey('resume_versions.id', ondelete='SET NULL'), nullable=True),
+        sa.Column('job_id', sa.String(36), sa.ForeignKey('jobs.id', ondelete='SET NULL'), nullable=True, index=True),
+        sa.Column('resume_version_id', sa.String(36), sa.ForeignKey('resume_versions.id', ondelete='SET NULL'), nullable=True, index=True),
         sa.Column('company', sa.String(255), nullable=False),
         sa.Column('role_title', sa.String(255), nullable=False),
         sa.Column('status', sa.String(50), server_default='saved', nullable=False),
@@ -81,8 +83,8 @@ def upgrade() -> None:
         'interview_prep_sessions',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('user_id', sa.String(36), sa.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True),
-        sa.Column('job_id', sa.String(36), sa.ForeignKey('jobs.id', ondelete='CASCADE'), nullable=False),
-        sa.Column('resume_id', sa.String(36), sa.ForeignKey('resumes.id', ondelete='CASCADE'), nullable=False),
+        sa.Column('job_id', sa.String(36), sa.ForeignKey('jobs.id', ondelete='CASCADE'), nullable=False, index=True),
+        sa.Column('resume_id', sa.String(36), sa.ForeignKey('resumes.id', ondelete='CASCADE'), nullable=False, index=True),
         sa.Column('qa_pairs', sa.JSON(), nullable=True),
         sa.Column('created_at', sa.DateTime(), server_default=sa.func.now(), nullable=False)
     )
