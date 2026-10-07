@@ -40,7 +40,8 @@ class ApplicationGenerator:
                 paragraph_or_claim=f"Demonstrated proficiency in {e.entity_name}",
                 cited_resume_evidence=e.context_snippet,
                 evidence_strength=e.evidence_strength,
-                confidence=e.confidence_score
+                confidence=e.confidence_score,
+                evidence_id=getattr(e, "id", None)
             ))
 
         doc_type = request.doc_type.lower()

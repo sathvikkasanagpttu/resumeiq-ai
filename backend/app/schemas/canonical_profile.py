@@ -19,6 +19,7 @@ class GroundedField(BaseModel):
     source_span: Optional[SourceSpan] = None
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     user_notes: Optional[str] = None
+    evidence_ids: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 

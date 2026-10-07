@@ -75,15 +75,24 @@ class BulletRewriter:
                 "risk_flag": "safe_enhancement",
                 "verified": True,
                 "metrics_used": [],
-                "technologies_used": []
+                "technologies_used": [],
+                "evidence_ids": []
             }
 
-        # 1. Collect candidate's verified skills pool
+        # 1. Collect candidate's verified skills pool and evidence IDs
         candidate_skills_set: Set[str] = set()
+        evidence_ids: List[str] = []
         for cat in profile.skills:
             for sk in cat.skills:
                 candidate_skills_set.add(sk.normalized_name.lower())
                 candidate_skills_set.add(sk.name.lower())
+                if getattr(sk, "id", None):
+                    evidence_ids.append(sk.id)
+        for exp in profile.experience:
+            for h in exp.highlights:
+                if h.value.strip().lower() == cleaned_orig.lower():
+                    evidence_ids.extend(h.evidence_ids)
+        evidence_ids = list(dict.fromkeys(evidence_ids))
 
         # 2. Extract metrics from original bullet
         orig_metrics = cls.extract_metrics(cleaned_orig)
@@ -165,7 +174,8 @@ class BulletRewriter:
                     "risk_flag": "needs_user_verification",
                     "verified": False,
                     "metrics_used": orig_metrics,
-                    "technologies_used": orig_technologies
+                    "technologies_used": orig_technologies,
+                    "evidence_ids": evidence_ids
                 }
 
         # Audit technologies: Ensure NO skills absent from candidate profile were added
@@ -180,7 +190,8 @@ class BulletRewriter:
                     "risk_flag": "needs_user_verification",
                     "verified": False,
                     "metrics_used": orig_metrics,
-                    "technologies_used": orig_technologies
+                    "technologies_used": orig_technologies,
+                    "evidence_ids": evidence_ids
                 }
 
         # If identical, keep reason clean
@@ -196,5 +207,6 @@ class BulletRewriter:
             "risk_flag": "safe_enhancement",
             "verified": True,
             "metrics_used": orig_metrics,
-            "technologies_used": orig_technologies
+            "technologies_used": orig_technologies,
+            "evidence_ids": evidence_ids
         }

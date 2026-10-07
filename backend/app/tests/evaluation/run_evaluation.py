@@ -22,7 +22,6 @@ def calculate_ndcg(actual_scores: List[float], ideal_scores: List[float], k: int
     return min(1.0, actual_dcg / ideal_dcg)
 
 def run_ai_evaluation():
-    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 
     # Create evaluation test user
@@ -149,7 +148,31 @@ def run_ai_evaluation():
     print("="*60 + "\n")
 
     db.close()
-    return results
+
+    # Regression gates
+    passed = True
+    if results["f1_score"] < 0.80:
+        print("❌ FAIL: F1 Score below 0.80 threshold.")
+        passed = False
+    if results["hallucination_rate_pct"] > 0.0:
+        print("❌ FAIL: Hallucination rate detected (> 0.0%).")
+        passed = False
+    if results["evidence_accuracy"] < 90.0:
+        print("❌ FAIL: Evidence accuracy below 90% threshold.")
+        passed = False
+    if results["mrr"] < 0.90:
+        print("❌ FAIL: MRR ranking below 0.90 threshold.")
+        passed = False
+    if results["ndcg"] < 0.85:
+        print("❌ FAIL: NDCG ranking below 0.85 threshold.")
+        passed = False
+
+    if not passed:
+        print("❌ EVALUATION REGRESSION GATES FAILED.")
+        return 1
+    print("✅ ALL EVALUATION GATES PASSED.")
+    return 0
 
 if __name__ == "__main__":
-    run_ai_evaluation()
+    import sys
+    sys.exit(run_ai_evaluation())

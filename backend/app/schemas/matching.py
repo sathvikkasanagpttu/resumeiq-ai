@@ -1,16 +1,33 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+from app.core.config import settings
 
 class MatchWeightsConfig(BaseModel):
-    weight_required_skills: float = 0.25
-    weight_semantic_fit: float = 0.20
-    weight_evidence_strength: float = 0.15
-    weight_experience_alignment: float = 0.15
-    weight_preferred_skills: float = 0.08
-    weight_seniority_alignment: float = 0.07
-    weight_domain_alignment: float = 0.05
-    weight_education_alignment: float = 0.05
+    weight_required_skills: float = Field(default_factory=lambda: settings.WEIGHT_REQUIRED_SKILLS)
+    weight_semantic_fit: float = Field(default_factory=lambda: settings.WEIGHT_SEMANTIC_FIT)
+    weight_evidence_strength: float = Field(default_factory=lambda: settings.WEIGHT_EVIDENCE_STRENGTH)
+    weight_experience_alignment: float = Field(default_factory=lambda: settings.WEIGHT_EXPERIENCE_ALIGNMENT)
+    weight_preferred_skills: float = Field(default_factory=lambda: settings.WEIGHT_PREFERRED_SKILLS)
+    weight_seniority_alignment: float = Field(default_factory=lambda: settings.WEIGHT_SENIORITY_ALIGNMENT)
+    weight_domain_alignment: float = Field(default_factory=lambda: settings.WEIGHT_DOMAIN_ALIGNMENT)
+    weight_education_alignment: float = Field(default_factory=lambda: settings.WEIGHT_EDUCATION_ALIGNMENT)
+
+    @model_validator(mode="after")
+    def validate_weights_sum(self) -> "MatchWeightsConfig":
+        total = (
+            self.weight_required_skills +
+            self.weight_semantic_fit +
+            self.weight_evidence_strength +
+            self.weight_experience_alignment +
+            self.weight_preferred_skills +
+            self.weight_seniority_alignment +
+            self.weight_domain_alignment +
+            self.weight_education_alignment
+        )
+        if round(total, 4) != 1.0:
+            raise ValueError(f"Matching weights must sum to 1.0 (got {total:.4f})")
+        return self
 
 class MatchComponentResponse(BaseModel):
     component_name: str

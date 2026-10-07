@@ -13,6 +13,7 @@ class EvidenceGroundingCitation(BaseModel):
     cited_resume_evidence: str
     evidence_strength: str
     confidence: float
+    evidence_id: Optional[str] = None
 
 class GeneratedMaterialResponse(BaseModel):
     id: str

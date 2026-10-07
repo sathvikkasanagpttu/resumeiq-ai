@@ -83,9 +83,11 @@ class ResumeGenerator:
                 f"Core technical proficiencies include {top_tools_str}. "
                 f"Dedicated to sound software architecture and verifiable impact."
             )
+            summary_ev_ids = [sk.id for cat in profile.skills for sk in cat.skills if sk.name in top_tools and getattr(sk, "id", None)]
             profile.basics.summary.value = new_summary
             profile.basics.summary.source = "user_confirmed"
             profile.basics.summary.confidence = 0.95
+            profile.basics.summary.evidence_ids = summary_ev_ids
 
         # 5. Prioritize / Re-order skills if role_targeted
         if target_skills:
@@ -117,7 +119,7 @@ class ResumeGenerator:
                         proposed_text=rewrite_res["proposed_text"],
                         status="pending",
                         source="ai_suggested_pending",
-                        evidence_ids=[highlight.id] if highlight.id else [],
+                        evidence_ids=(rewrite_res.get("evidence_ids") or []) + ([highlight.id] if getattr(highlight, "id", None) else []),
                         change_reason=rewrite_res["change_reason"],
                         risk_flag=rewrite_res["risk_flag"]
                     )

@@ -19,6 +19,7 @@ from app.schemas.extension import (
 from app.schemas.job import JobCreate
 from app.services.job.job_pipeline import JobPipeline
 from app.services.matching.hybrid_matcher import HybridMatcher
+from app.services.matching.verdict import determine_verdict
 from app.services.ontology.skill_matcher import skill_matcher
 from app.services.ontology.taxonomy import ontology
 from app.services.llm.application_gen import application_generator
@@ -251,17 +252,9 @@ class ExtensionService:
         t_match = (time.perf_counter() - t_match_start) * 1000
 
         # 5. Determine Verdict from configurable thresholds
-        thresholds = req.verdict_thresholds or {"strong": 80, "good": 65, "partial": 45}
+        thresholds = req.verdict_thresholds
         score = int(round(match.compatibility_score))
-
-        if score >= thresholds.get("strong", 80):
-            verdict = "strong_match"
-        elif score >= thresholds.get("good", 65):
-            verdict = "good_match"
-        elif score >= thresholds.get("partial", 45):
-            verdict = "partial_match"
-        else:
-            verdict = "weak_match"
+        verdict = determine_verdict(score, thresholds)
 
         # 6. Build Matched Skills with Evidence
         cand_skills = {s.normalized_skill.lower(): s for s in resume.skills}
@@ -561,7 +554,7 @@ class ExtensionService:
 
             match = HybridMatcher.compute_match(db=db, resume=resume, job=job)
             sc = int(round(match.compatibility_score))
-            verdict = "strong_match" if sc >= 80 else ("good_match" if sc >= 65 else ("partial_match" if sc >= 45 else "weak_match"))
+            verdict = determine_verdict(sc)
 
             strengths = match.explanation_summary.get("top_strengths", []) if match.explanation_summary else []
             concerns = match.explanation_summary.get("critical_concerns", []) if match.explanation_summary else []

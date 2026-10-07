@@ -61,12 +61,33 @@ class Settings(BaseSettings):
     WEIGHT_DOMAIN_ALIGNMENT: float = 0.05
     WEIGHT_EDUCATION_ALIGNMENT: float = 0.05
     
+    # Centralized Verdict Thresholds
+    DEFAULT_VERDICT_THRESHOLDS: dict = {
+        "strong": 80,
+        "good": 65,
+        "partial": 45
+    }
+    
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
     @model_validator(mode="after")
     def validate_settings(self) -> "Settings":
         env = (self.ENVIRONMENT or "").lower()
         key = self.SECRET_KEY or ""
+        
+        # 0. Validate matching weights sum to 1.0
+        total_weights = (
+            self.WEIGHT_REQUIRED_SKILLS +
+            self.WEIGHT_SEMANTIC_FIT +
+            self.WEIGHT_EVIDENCE_STRENGTH +
+            self.WEIGHT_EXPERIENCE_ALIGNMENT +
+            self.WEIGHT_PREFERRED_SKILLS +
+            self.WEIGHT_SENIORITY_ALIGNMENT +
+            self.WEIGHT_DOMAIN_ALIGNMENT +
+            self.WEIGHT_EDUCATION_ALIGNMENT
+        )
+        if round(total_weights, 4) != 1.0:
+            raise ValueError(f"Matching weights must sum to 1.0 (got {total_weights:.4f})")
         
         # 1. Strip any wildcard origins across all environments
         self.BACKEND_CORS_ORIGINS = [o.strip() for o in self.BACKEND_CORS_ORIGINS if o and o.strip() != "*"]
