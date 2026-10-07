@@ -51,6 +51,10 @@ async function detectJob(force = false): Promise<CapturedJob | null> {
 
 // Listen for messages from background or sidepanel
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === "PING") {
+    sendResponse({ pong: true });
+    return true;
+  }
   if (message.type === MESSAGE_TYPES.CAPTURE_JOB) {
     (async () => {
       try {

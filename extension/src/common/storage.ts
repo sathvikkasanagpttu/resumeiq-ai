@@ -8,6 +8,10 @@ class StorageService {
     return typeof chrome !== "undefined" && !!chrome?.storage?.local;
   }
 
+  private isSessionStorageAvailable(): boolean {
+    return typeof chrome !== "undefined" && !!chrome?.storage?.session;
+  }
+
   private getStorage(): { getItem: (k: string) => string | null; setItem: (k: string, v: string) => void; removeItem: (k: string) => void } {
     if (typeof localStorage !== "undefined" && typeof localStorage?.getItem === "function") {
       return localStorage;
@@ -21,11 +25,12 @@ class StorageService {
 
   async getAuth(): Promise<ExtStoredAuth | null> {
     let auth: ExtStoredAuth | null = null;
-    if (this.isChromeStorageAvailable()) {
-      const data = await chrome.storage.local.get(STORAGE_KEYS.AUTH);
+    if (this.isSessionStorageAvailable()) {
+      const data = await chrome.storage.session.get(STORAGE_KEYS.AUTH);
       auth = data[STORAGE_KEYS.AUTH] || null;
     } else {
-      const raw = this.getStorage().getItem(STORAGE_KEYS.AUTH);
+      // Memory fallback for tests: NEVER store or read auth tokens in localStorage
+      const raw = this.memStore[STORAGE_KEYS.AUTH];
       auth = raw ? JSON.parse(raw) : null;
     }
     if (auth && typeof auth === "object") {
@@ -43,19 +48,20 @@ class StorageService {
   }
 
   async setAuth(auth: ExtStoredAuth): Promise<void> {
-    if (this.isChromeStorageAvailable()) {
-      await chrome.storage.local.set({ [STORAGE_KEYS.AUTH]: auth });
+    if (this.isSessionStorageAvailable()) {
+      await chrome.storage.session.set({ [STORAGE_KEYS.AUTH]: auth });
       return;
     }
-    this.getStorage().setItem(STORAGE_KEYS.AUTH, JSON.stringify(auth));
+    // Auth tokens MUST NOT be stored in localStorage: use in-memory store
+    this.memStore[STORAGE_KEYS.AUTH] = JSON.stringify(auth);
   }
 
   async clearAuth(): Promise<void> {
-    if (this.isChromeStorageAvailable()) {
-      await chrome.storage.local.remove(STORAGE_KEYS.AUTH);
+    if (this.isSessionStorageAvailable()) {
+      await chrome.storage.session.remove(STORAGE_KEYS.AUTH);
       return;
     }
-    this.getStorage().removeItem(STORAGE_KEYS.AUTH);
+    delete this.memStore[STORAGE_KEYS.AUTH];
   }
 
   async getSettings(): Promise<ExtSettings> {

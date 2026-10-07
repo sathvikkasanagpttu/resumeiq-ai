@@ -27,19 +27,23 @@
     "sidePanel",
     "storage",
     "contextMenus",
-    "tabs",
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "http://localhost:8000/*",
+    "https://api.resumeiq.ai/*"
   ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
+  "optional_host_permissions": [
+    "*://*.linkedin.com/*",
+    "*://*.indeed.com/*",
+    "*://*.glassdoor.com/*",
+    "*://*.naukri.com/*",
+    "*://*.greenhouse.io/*",
+    "*://*.lever.co/*",
+    "*://*.wellfound.com/*",
+    "*://*.angel.co/*",
+    "*://*.myworkdayjobs.com/*"
   ],
   "commands": {
     "match-job": {

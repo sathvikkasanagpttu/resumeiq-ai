@@ -40,6 +40,9 @@ dist/
 frontend/dist/
 extension/dist/
 extension/assets/
+extension/background.js
+extension/content.js
+extension/sidepanel.html
 
 # Archives & Zips
 *.zip

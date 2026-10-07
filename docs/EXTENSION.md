@@ -26,10 +26,10 @@ The ResumeIQ Browser Extension brings evidence-first resume matching, skill gap 
 │  │  (LinkedIn / Indeed)  │          │      (MV3 Service Worker)     │  │
 │  │                       │          │                               │  │
 │  │  Content Script       │◄────────►│  - Action / SidePanel open    │  │
-│  │  - Site Adapters      │ messages │  - Context Menu handler       │  │
-│  │  - JSON-LD parser     │          │  - Alt+Shift+M Command        │  │
-│  │  - Shadow DOM Button  │          └───────────────▲───────────────┘  │
-│  └───────────▲───────────┘                          │                  │
+│  │  - Site Adapters      │ messages │  - On-demand scripting inject │  │
+│  │  - JSON-LD parser     │          │  - Context Menu handler       │  │
+│  │  - Shadow DOM Button  │          │  - Alt+Shift+M Command        │  │
+│  └───────────▲───────────┘          └───────────────▲───────────────┘  │
 │              │ storage / messages                   │                  │
 │  ┌───────────▼──────────────────────────────────────▼───────────────┐  │
 │  │                    Chrome Side Panel                             │  │
@@ -46,6 +46,7 @@ The ResumeIQ Browser Extension brings evidence-first resume matching, skill gap 
 │                    RESUMEIQ BACKEND (/api/v1)                          │
 │                                                                        │
 │  /extension/auth/pair          -> Scoped, revocable pairing tokens     │
+│  /extension/auth/refresh       -> Token rotation & device reuse check  │
 │  /extension/jd/capture         -> SHA-256 dedupe & content sanitize    │
 │  /extension/match/quick        -> Fast deterministic match (<20ms)     │
 │  /extension/match/{id}/stream  -> Server-Sent Events LLM explanation   │
@@ -57,66 +58,76 @@ The ResumeIQ Browser Extension brings evidence-first resume matching, skill gap 
 
 ---
 
-## 3. Product Features & User Experience
+## 3. Permissions Justification & Security Model
 
-### 3.1 Headline User Flows
-1. **Browse:** Candidate opens a job post on any supported job board.
-2. **Trigger:**
-   - Click extension icon on toolbar (opens side panel).
-   - Press keyboard shortcut (`Alt+Shift+M`).
-   - Highlight job text → right-click → *"Check resume match with ResumeIQ"*.
-   - Click floating *"⚡ Match with ResumeIQ"* pill button injected on the page.
-3. **Capture:** Extension extracts Title, Company, Location, and sanitized Description without navigation headers or ads.
-4. **Select Resume:** Choose any saved resume version from the account or drag-and-drop a new resume file (PDF/DOCX/TXT) directly into the panel.
-5. **Instant Result (< 2s):**
-   - **Score & Verdict:** Ring gauge and color-coded verdict banner.
-   - **8 Component Pillars:** Required skills (35%), Preferred skills (15%), Semantic fit (15%), Evidence strength (10%), Experience duration (10%), Seniority (5%), Domain (5%), Education (5%).
-   - **Matched Skills:** Every skill verified by an exact quote line (`proof_snippet`) from the resume.
-   - **Transferable Skills:** Analogous skills matched with similarity rating (e.g., FastAPI → Django).
-   - **Skill Gaps:** Sorted into *Critical* (missing core requirements), *Moderate*, *Minor*, and *Representation Gaps* (skills in candidate profile but omitted in this resume version).
-   - **Streamed Explanation:** Real-time AI explanation grounding each point in evidence.
-6. **One-Click Actions:**
-   - **Tailor Resume:** Generates bullet points matching job keywords using candidate's verified evidence only.
-   - **Cover Letter:** Generates a concise, evidence-grounded cover letter.
-   - **Recruiter Message:** Generates a 3-sentence outreach message for LinkedIn.
-   - **Save to Tracker:** Saves job to the application pipeline with one click.
-   - **Compare Resumes:** Side-by-side comparison of 2–3 resume versions against this job.
+Manifest V3 implements the principle of least privilege:
+
+| Permission | Purpose & Review Justification |
+| :--- | :--- |
+| `sidePanel` | Displays match results, skill gaps, and tailored applications alongside job postings without leaving the page. |
+| `storage` | Persists user preferences, active resume selections, and match cache. **Auth tokens are isolated exclusively in `chrome.storage.session`** (in-memory per browser session), never written to `localStorage` or disk. |
+| `contextMenus` | Adds the right-click option *"Check resume match with ResumeIQ"* when text or a job post is selected. |
+| `activeTab` | Grants temporary access to the active tab upon explicit user gesture (action click, context menu, keyboard shortcut), eliminating broad background surveillance. |
+| `scripting` | Executes the job extraction content script on-demand in the active tab upon explicit user invocation. |
+| `host_permissions` | Restricted strictly to the configured API hosts (`http://localhost:8000/*`, `https://api.resumeiq.ai/*`) for communication with the ResumeIQ backend. |
+| `optional_host_permissions` | Opt-in permissions for automated page detection across supported job platforms: `linkedin.com`, `indeed.com`, `glassdoor.com`, `naukri.com`, `greenhouse.io`, `lever.co`, `wellfound.com`, `angel.co`, `myworkdayjobs.com`. |
+
+### Security Hardening Measures
+1. **No `<all_urls>` Content Scripts:** Removed automatic global script injection. Scripts are injected on-demand when the user invokes the extension.
+2. **No `tabs` Permission:** Removed broad tab tracking and history visibility.
+3. **Safe DOM & Shadow DOM:** The floating match button uses pure `document.createElement`, SVG DOM construction, and `textContent`. Zero `innerHTML` usage prevents DOM-based XSS.
+4. **Session-Only Tokens:** Auth tokens are stored in `chrome.storage.session`, not permanent storage or `localStorage`.
+5. **Build-Time API Config:** Default API URL is configured at build time. In production, HTTPS is enforced and localhost defaults are rejected.
+6. **Single Source of Truth:** Builds strictly into `extension/dist/`. Root duplicate files (`background.js`, `content.js`, `sidepanel.html`, `assets/`) have been removed.
 
 ---
 
-## 4. Local Installation & Development
+## 4. Supported Platforms & Adapters
 
-### 4.1 Prerequisites
-- Node.js (v18+)
-- Python 3.11+ with backend virtualenv running (`http://localhost:8000`)
+The extension features dedicated adapters tested with ground truth HTML fixtures:
+- **LinkedIn** (`linkedin.html` fixture)
+- **Indeed** (`indeed.html` fixture)
+- **Greenhouse** (`greenhouse.html` fixture)
+- **JSON-LD Schema.org** (`jsonld.html` fixture)
+- **Naukri** (`naukri.html` fixture)
+- **Workday** (`workday.html` fixture)
+- **Glassdoor** (`glassdoor.html` fixture)
+- **Lever** (`lever.html` fixture)
+- **Wellfound / AngelList** (`wellfound.html` fixture)
+- **Generic Universal Fallback** (heuristics for any career page)
 
-### 4.2 Building the Extension
+---
+
+## 5. Local Installation & Development
+
+### 5.1 Building the Extension
 ```bash
 cd extension
 npm run build
 ```
-This builds all artifacts into `extension/dist/`:
-- `manifest.json` (Manifest V3)
-- `sidepanel.html` & React SPA bundle
-- `background.js` (ES Module service worker)
-- `content.js` (Self-contained IIFE content script)
-- `icons/` (16px, 48px, 128px PNGs)
+Builds all production assets into `extension/dist/`:
+- `dist/manifest.json`
+- `dist/sidepanel.html` & React SPA bundle
+- `dist/background.js`
+- `dist/content.js`
+- `dist/icons/`
 
-### 4.3 Running Unit Tests
+### 5.2 Running Adapter Unit Tests
 ```bash
 cd extension
 npm test
 ```
-Runs 15 automated test cases testing:
-- Text sanitization and prompt-injection defense
-- LinkedIn, Indeed, Greenhouse, and Generic site adapters
-- Schema.org `JobPosting` JSON-LD extraction
-- Deterministic score threshold classification
-- Storage service fallbacks
+Executes all 26 unit tests covering adapters, token session storage, build-time API configuration, and text sanitization.
 
-### 4.4 Loading in Google Chrome / Edge / Brave
-1. Open Chrome and navigate to `chrome://extensions/`.
-2. Enable **Developer mode** (toggle in upper right).
+### 5.3 Running Playwright E2E Benchmark Suite
+```bash
+cd extension
+npm run test:e2e
+```
+Launches Chromium with the extension loaded, navigates to real saved job board fixtures on a local test server, exercises the capture flow, and verifies 100% extraction accuracy across all 9 platforms.
+
+### 5.4 Loading in Google Chrome / Brave / Edge
+1. Navigate to `chrome://extensions/`.
+2. Enable **Developer mode**.
 3. Click **Load unpacked**.
-4. Select the `extension/dist` directory.
-5. Open any job posting (e.g. LinkedIn, Indeed) and click the ResumeIQ extension icon!
+4. Select `extension/dist`.

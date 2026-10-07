@@ -1,6 +1,18 @@
 import type { ExtSettings } from "./types.ts";
 
-export const DEFAULT_API_BASE_URL = "http://localhost:8000/api/v1";
+// Build-time configured API base URL:
+// In production, default must be HTTPS (no localhost default allowed).
+const isProd =
+  (typeof process !== "undefined" && process.env?.NODE_ENV === "production") ||
+  (typeof import.meta !== "undefined" && Boolean((import.meta as any).env?.PROD));
+
+const configuredApiUrl =
+  (typeof process !== "undefined" && process.env?.VITE_API_URL) ||
+  (typeof import.meta !== "undefined" && (import.meta as any).env?.VITE_API_URL);
+
+export const DEFAULT_API_BASE_URL =
+  configuredApiUrl ||
+  (isProd ? "https://api.resumeiq.ai/api/v1" : "http://localhost:8000/api/v1");
 
 export const DEFAULT_SETTINGS: ExtSettings = {
   api_base_url: DEFAULT_API_BASE_URL,

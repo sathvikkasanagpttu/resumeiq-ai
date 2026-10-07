@@ -1,4 +1,31 @@
-import { CapturedJob } from "../common/types";
+import type { CapturedJob } from "../common/types.ts";
+
+/**
+ * Sanitize all page-derived text before DOM rendering to prevent XSS.
+ * Strips markup, control characters, zero-width characters, and collapses whitespace.
+ */
+export function sanitizePageText(text: string | null | undefined): string {
+  if (!text) return "";
+  return text
+    .replace(/<script[\s\S]*?<\/script>/gi, "") // Strip script tags and their content
+    .replace(/<style[\s\S]*?<\/style>/gi, "") // Strip style tags and their content
+    .replace(/<[^>]*>?/gm, "") // Strip remaining HTML tags
+    .replace(/[\u200B-\u200D\uFEFF]/g, "") // Strip zero-width chars
+    .replace(/[\x00-\x1F\x7F]/g, " ") // Strip control chars
+    .replace(/\s+/g, " ") // Collapse whitespace
+    .trim();
+}
+
+function createSvgElement<K extends keyof SVGElementTagNameMap>(
+  tag: K,
+  attrs: Record<string, string>
+): SVGElementTagNameMap[K] {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [key, val] of Object.entries(attrs)) {
+    el.setAttribute(key, val);
+  }
+  return el;
+}
 
 export class FloatingMatchButton {
   private hostElement: HTMLElement | null = null;
@@ -99,22 +126,65 @@ export class FloatingMatchButton {
     const container = document.createElement("div");
     container.className = "pill-container";
 
-    container.innerHTML = `
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-      </svg>
-      <div class="text-wrap">
-        <span class="label">Match with ResumeIQ</span>
-        <span class="subtext">${job.title ? (job.title.length > 25 ? job.title.slice(0, 22) + "..." : job.title) : "Job Detected"}</span>
-      </div>
-      <div class="close-btn" title="Dismiss">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </div>
-      <div class="toast" id="toast">Opening ResumeIQ Panel...</div>
-    `;
+    // Safe DOM creation (Zero innerHTML)
+    const iconSvg = createSvgElement("svg", {
+      class: "icon",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2.5",
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+    });
+    const iconPoly = createSvgElement("polygon", {
+      points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2",
+    });
+    iconSvg.appendChild(iconPoly);
+    container.appendChild(iconSvg);
+
+    const textWrap = document.createElement("div");
+    textWrap.className = "text-wrap";
+
+    const labelSpan = document.createElement("span");
+    labelSpan.className = "label";
+    labelSpan.textContent = "Match with ResumeIQ";
+    textWrap.appendChild(labelSpan);
+
+    const sanitizedTitle = sanitizePageText(job.title) || "Job Detected";
+    const displayTitle =
+      sanitizedTitle.length > 25 ? sanitizedTitle.slice(0, 22) + "..." : sanitizedTitle;
+
+    const subtextSpan = document.createElement("span");
+    subtextSpan.className = "subtext";
+    subtextSpan.textContent = displayTitle;
+    textWrap.appendChild(subtextSpan);
+
+    container.appendChild(textWrap);
+
+    const closeBtn = document.createElement("div");
+    closeBtn.className = "close-btn";
+    closeBtn.setAttribute("title", "Dismiss");
+
+    const closeSvg = createSvgElement("svg", {
+      width: "12",
+      height: "12",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      "stroke-width": "2.5",
+    });
+    const line1 = createSvgElement("line", { x1: "18", y1: "6", x2: "6", y2: "18" });
+    const line2 = createSvgElement("line", { x1: "6", y1: "6", x2: "18", y2: "18" });
+    closeSvg.appendChild(line1);
+    closeSvg.appendChild(line2);
+    closeBtn.appendChild(closeSvg);
+    container.appendChild(closeBtn);
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.id = "toast";
+    toast.textContent = "Opening ResumeIQ Panel...";
+    container.appendChild(toast);
 
     // Click handler for match
     container.addEventListener("click", (e) => {

@@ -25,8 +25,12 @@ export function extractTextFromSelectors(
 ): string {
   for (const selector of selectors) {
     const el = doc.querySelector(selector);
-    if (el && el.textContent) {
-      const text = cleanText(el.textContent);
+    if (el) {
+      const text = cleanText(
+        (el as any).getAttribute?.("alt") ||
+        (el as any).getAttribute?.("content") ||
+        el.textContent
+      );
       if (text.length > 0) return text;
     }
   }

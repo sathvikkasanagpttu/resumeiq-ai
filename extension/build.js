@@ -6,30 +6,22 @@ import fs from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-function copyDirSync(src, dest) {
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  }
-  const entries = fs.readdirSync(src, { withFileTypes: true });
-  for (const entry of entries) {
-    const srcPath = resolve(src, entry.name);
-    const destPath = resolve(dest, entry.name);
-    if (entry.isDirectory()) {
-      copyDirSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-
 async function run() {
-  console.log('Building ResumeIQ Extension...');
+  console.log('Building ResumeIQ Extension (Single Source of Truth: dist/)...');
   
+  const isProd = process.env.NODE_ENV === 'production';
+  const apiBaseUrl = process.env.VITE_API_URL || (isProd ? 'https://api.resumeiq.ai/api/v1' : 'http://localhost:8000/api/v1');
+  const sharedDefines = {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || (isProd ? 'production' : 'development')),
+    'process.env.VITE_API_URL': JSON.stringify(apiBaseUrl),
+  };
+
   // 1. Build Side Panel React Application
   console.log('Building sidepanel...');
   await build({
     configFile: false,
     base: './',
+    define: sharedDefines,
     plugins: [react()],
     root: resolve(__dirname, 'src/sidepanel'),
     build: {
@@ -54,6 +46,7 @@ async function run() {
   console.log('Building background service worker...');
   await build({
     configFile: false,
+    define: sharedDefines,
     build: {
       outDir: resolve(__dirname, 'dist'),
       emptyOutDir: false,
@@ -69,6 +62,7 @@ async function run() {
   console.log('Building content script...');
   await build({
     configFile: false,
+    define: sharedDefines,
     build: {
       outDir: resolve(__dirname, 'dist'),
       emptyOutDir: false,
@@ -99,23 +93,8 @@ async function run() {
     );
   }
 
-  // 5. Ensure extension root directory also has all required files so Chrome can load EITHER root or dist/
-  console.log('Syncing compiled bundles to extension root for direct loading...');
-  fs.copyFileSync(resolve(__dirname, 'dist/background.js'), resolve(__dirname, 'background.js'));
-  fs.copyFileSync(resolve(__dirname, 'dist/content.js'), resolve(__dirname, 'content.js'));
-  fs.copyFileSync(resolve(__dirname, 'dist/sidepanel.html'), resolve(__dirname, 'sidepanel.html'));
-  const rootAssetsDir = resolve(__dirname, 'assets');
-  if (fs.existsSync(rootAssetsDir)) {
-    fs.rmSync(rootAssetsDir, { recursive: true, force: true });
-  }
-  if (fs.existsSync(resolve(__dirname, 'dist/assets'))) {
-    copyDirSync(resolve(__dirname, 'dist/assets'), rootAssetsDir);
-  }
-
-  console.log('ResumeIQ Extension build complete!');
-  console.log('Both directories are now 100% valid to load in Chrome:');
-  console.log('  Option A (Root): ~/Downloads/AI _Resume_Builder/extension');
-  console.log('  Option B (Dist): ~/Downloads/AI _Resume_Builder/extension/dist');
+  console.log('ResumeIQ Extension build complete in dist/!');
+  console.log('Unpacked extension path: ' + resolve(__dirname, 'dist'));
 }
 
 run().catch((err) => {

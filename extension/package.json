@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.js",
-    "test": "node --experimental-strip-types --test tests/adapters.test.ts"
+    "test": "node --experimental-strip-types --test tests/adapters.test.ts",
+    "test:e2e": "node --experimental-strip-types tests/e2e-capture.ts"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",
