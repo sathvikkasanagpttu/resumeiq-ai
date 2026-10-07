@@ -43,11 +43,18 @@ export const JobAnalyzerPage: React.FC<JobAnalyzerPageProps> = ({
   const [creating, setCreating] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Form State
-  const [title, setTitle] = useState(SAMPLE_BENCHMARK_JOB.title);
-  const [company, setCompany] = useState(SAMPLE_BENCHMARK_JOB.company);
-  const [description, setDescription] = useState(SAMPLE_BENCHMARK_JOB.description);
-  const [location, setLocation] = useState('Remote');
+  // Form State - Clean initial state, no preloaded mock data
+  const [title, setTitle] = useState('');
+  const [company, setCompany] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+
+  const handlePopulateSample = () => {
+    setTitle(SAMPLE_BENCHMARK_JOB.title);
+    setCompany(SAMPLE_BENCHMARK_JOB.company);
+    setDescription(SAMPLE_BENCHMARK_JOB.description);
+    setLocation(SAMPLE_BENCHMARK_JOB.location);
+  };
 
   useEffect(() => {
     loadJobs();
@@ -174,9 +181,20 @@ export const JobAnalyzerPage: React.FC<JobAnalyzerPageProps> = ({
         {/* Left Column: Input Form (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Plus className="w-4 h-4 text-sky-400" /> Ingest New Target Role
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-sky-400" /> Ingest New Target Role
+              </h3>
+              {import.meta.env.DEV && (
+                <button
+                  type="button"
+                  onClick={handlePopulateSample}
+                  className="text-[11px] text-amber-400 hover:text-amber-300 font-mono flex items-center gap-1"
+                >
+                  <Sparkles className="w-3 h-3" /> [Dev Only] Sample
+                </button>
+              )}
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

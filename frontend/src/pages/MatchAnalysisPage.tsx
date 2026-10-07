@@ -347,6 +347,26 @@ export const MatchAnalysisPage: React.FC<MatchAnalysisPageProps> = ({
         </div>
       )}
 
+      {(computing || loading) && (
+        <div className="p-16 text-center border border-slate-800 rounded-3xl bg-slate-900/40 space-y-3 animate-pulse">
+          <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <h3 className="text-sm font-semibold text-white">Evaluating 8 Compatibility Evidence Pillars...</h3>
+          <p className="text-xs text-slate-400">Verifying required skills, semantic fit, seniority, and proof snippets</p>
+        </div>
+      )}
+
+      {!match && !computing && !loading && (
+        <div className="p-16 text-center border-2 border-dashed border-slate-800 rounded-3xl bg-slate-900/40 space-y-3">
+          <GitCompare className="w-12 h-12 text-slate-600 mx-auto" />
+          <h3 className="text-lg font-bold text-white">No Match Analysis Selected</h3>
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            {resumes.length === 0 || jobs.length === 0
+              ? 'Please upload at least one resume and create or select a job target first.'
+              : 'Select a candidate resume and target job above, then click "Recompute Match Pipeline" to evaluate compatibility.'}
+          </p>
+        </div>
+      )}
+
       {/* Interactive Evidence Modal */}
       {match && inspectSkill && (
         <EvidenceModal

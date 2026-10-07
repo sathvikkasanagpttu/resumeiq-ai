@@ -149,13 +149,16 @@ export const ResumeIntelligencePage: React.FC<ResumeIntelligencePageProps> = ({
 
         {/* Upload Controls */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleLoadSample}
-            disabled={uploading}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4 text-teal-400" /> Load Benchmark Profile
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              onClick={handleLoadSample}
+              disabled={uploading}
+              className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-mono border border-slate-700 transition flex items-center gap-2"
+              title="Development only fixture"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> [Dev Only] Test Sample
+            </button>
+          )}
 
           <label className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-teal-600/20 cursor-pointer transition flex items-center gap-2">
             <Upload className="w-4 h-4" />
@@ -203,17 +206,19 @@ export const ResumeIntelligencePage: React.FC<ResumeIntelligencePageProps> = ({
         <div className="p-16 text-center border-2 border-dashed border-slate-800 rounded-3xl bg-slate-900/40 space-y-4">
           <Upload className="w-12 h-12 text-slate-600 mx-auto" />
           <div>
-            <h3 className="text-lg font-bold text-white">No Resume Active</h3>
+            <h3 className="text-lg font-bold text-white">No Resume Uploaded Yet</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              Upload your resume in PDF, DOCX, or TXT format or click 'Load Benchmark Profile' to test the extraction engine.
+              Upload your resume in PDF, DOCX, or TXT format using the button above to extract and analyze verified career experience.
             </p>
           </div>
-          <button
-            onClick={handleLoadSample}
-            className="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-teal-600/20 transition inline-flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" /> Load Sarah Chen Benchmark
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              onClick={handleLoadSample}
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-mono transition inline-flex items-center gap-2"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> [Dev Only] Load Test Profile
+            </button>
+          )}
         </div>
       )}
 

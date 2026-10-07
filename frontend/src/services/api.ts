@@ -10,13 +10,22 @@ import {
 
 const BASE_URL = '/api/v1';
 
-let authToken: string | null = localStorage.getItem('resumeiq_token');
+let authToken: string | null =
+  typeof sessionStorage !== 'undefined'
+    ? sessionStorage.getItem('resumeiq_token')
+    : null;
 
 export const setAuthToken = (token: string | null) => {
   authToken = token;
-  if (token) {
-    localStorage.setItem('resumeiq_token', token);
-  } else {
+  if (typeof sessionStorage !== 'undefined') {
+    if (token) {
+      sessionStorage.setItem('resumeiq_token', token);
+    } else {
+      sessionStorage.removeItem('resumeiq_token');
+    }
+  }
+  // Clear any legacy localStorage token
+  if (typeof localStorage !== 'undefined') {
     localStorage.removeItem('resumeiq_token');
   }
 };
@@ -33,6 +42,12 @@ const getHeaders = (isMultipart = false) => {
 };
 
 async function handleResponse<T>(res: Response): Promise<T> {
+  if (res.status === 401) {
+    setAuthToken(null);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('resumeiq:logout'));
+    }
+  }
   if (!res.ok) {
     let errorMsg = `Request failed: ${res.statusText}`;
     try {

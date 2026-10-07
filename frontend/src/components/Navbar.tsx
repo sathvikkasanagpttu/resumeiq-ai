@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { ShieldCheck, Activity, User, Bell, Sparkles, Database } from 'lucide-react';
-import { api } from '../services/api';
+import { ShieldCheck, Activity, User, Bell, Sparkles, Database, LogOut } from 'lucide-react';
+import { api, setAuthToken } from '../services/api';
 
 export const Navbar: React.FC = () => {
   const [health, setHealth] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
 
+  const loadUser = () => {
+    api.getMe().then(setUser).catch(() => setUser(null));
+  };
+
   useEffect(() => {
     api.getHealth().then(setHealth).catch(() => setHealth({ status: 'offline' }));
-    api.getMe().then(setUser).catch(() => setUser(null));
+    loadUser();
+
+    const handleLogoutEvent = () => {
+      setUser(null);
+    };
+    window.addEventListener('resumeiq:logout', handleLogoutEvent);
+    return () => window.removeEventListener('resumeiq:logout', handleLogoutEvent);
   }, []);
+
+  const handleLogout = () => {
+    setAuthToken(null);
+    setUser(null);
+    window.dispatchEvent(new CustomEvent('resumeiq:logout'));
+  };
 
   const getInitials = (name?: string) => {
     if (!name) return 'U';
@@ -66,6 +82,16 @@ export const Navbar: React.FC = () => {
               {user?.email || 'Logged In'}
             </div>
           </div>
+          {user && (
+            <button
+              onClick={handleLogout}
+              className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>
