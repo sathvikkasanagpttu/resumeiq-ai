@@ -1,9 +1,9 @@
 import io
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, Request, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.core.rate_limit import check_user_and_ip_limits
 from app.api.deps import get_current_user
 from app.models.user import User
 from app.models.resume import Resume, ResumeVersion, ResumeDiffItem, ApplicationTrackerItem, InterviewPrepSession
@@ -32,9 +32,18 @@ router = APIRouter()
 @router.post("/generate", response_model=ResumeVersionResponse)
 def generate_resume_version(
     req: GenerateResumeRequest,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    check_user_and_ip_limits(
+        request=request,
+        user_id=current_user.id,
+        action="builder_generation",
+        user_limit=20,
+        ip_limit=40,
+        window_seconds=60
+    )
     resume = db.query(Resume).filter(
         Resume.id == req.resume_id,
         Resume.user_id == current_user.id

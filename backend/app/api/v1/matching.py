@@ -1,7 +1,8 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.core.rate_limit import check_user_and_ip_limits
 from app.models.user import User
 from app.models.resume import Resume
 from app.models.job import Job
@@ -15,9 +16,18 @@ router = APIRouter()
 @router.post("", response_model=MatchResponse)
 def compute_match(
     req: MatchRequest,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    check_user_and_ip_limits(
+        request=request,
+        user_id=current_user.id,
+        action="match_computation",
+        user_limit=30,
+        ip_limit=60,
+        window_seconds=60
+    )
     resume = db.query(Resume).filter(Resume.id == req.resume_id).first()
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")

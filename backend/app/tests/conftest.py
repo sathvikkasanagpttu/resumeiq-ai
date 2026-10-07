@@ -17,7 +17,14 @@ if str(backend_dir) not in sys.path:
 from app.core.config import settings
 from app.core.database import Base, get_db
 import app.core.database as db_module
+from app.core.rate_limit import rate_limiter
 from app.main import app
+
+@pytest.fixture(autouse=True)
+def reset_rate_limits_fixture():
+    rate_limiter.reset()
+    yield
+    rate_limiter.reset()
 
 @pytest.fixture(scope="session")
 def test_db_path(tmp_path_factory):

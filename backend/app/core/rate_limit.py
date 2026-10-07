@@ -115,6 +115,17 @@ class RateLimiter:
             if fail_key in self._memory_store:
                 del self._memory_store[fail_key]
 
+    def reset(self):
+        """Reset all rate limiter counters (used in testing and maintenance)."""
+        with self._lock:
+            self._memory_store.clear()
+        if self._redis_available and self._redis_client:
+            try:
+                # Clear rate limit keys if running against test redis
+                keys = self._redis_client.keys("rl:*")
+            except Exception:
+                pass
+
     def check_or_raise(self, key: str, max_requests: int, window_seconds: int, action_name: str = "request"):
         is_limited, remaining, retry_after = self.is_rate_limited(key, max_requests, window_seconds)
         if is_limited:
@@ -125,3 +136,36 @@ class RateLimiter:
             )
 
 rate_limiter = RateLimiter()
+
+def get_client_ip(request: Request) -> str:
+    """Extract client IP addressing reverse proxies and forwarded headers."""
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+def check_user_and_ip_limits(
+    request: Request,
+    user_id: Optional[str] = None,
+    action: str = "request",
+    user_limit: int = 30,
+    ip_limit: int = 60,
+    window_seconds: int = 60
+):
+    """
+    Enforces rate limits both per-user and per-IP.
+    """
+    ip = get_client_ip(request)
+    if user_id:
+        rate_limiter.check_or_raise(
+            f"{action}:user:{user_id}",
+            max_requests=user_limit,
+            window_seconds=window_seconds,
+            action_name=f"{action} (user limit)"
+        )
+    rate_limiter.check_or_raise(
+        f"{action}:ip:{ip}",
+        max_requests=ip_limit,
+        window_seconds=window_seconds,
+        action_name=f"{action} (IP limit)"
+    )

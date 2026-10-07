@@ -64,27 +64,34 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
     @model_validator(mode="after")
-    def validate_production_settings(self) -> "Settings":
+    def validate_settings(self) -> "Settings":
         env = (self.ENVIRONMENT or "").lower()
         key = self.SECRET_KEY or ""
         
+        # 1. Strip any wildcard origins across all environments
+        self.BACKEND_CORS_ORIGINS = [o.strip() for o in self.BACKEND_CORS_ORIGINS if o and o.strip() != "*"]
+
+        # 2. Enforce strong SECRET_KEY in production mode
         if env in ("production", "prod"):
             if not key or key in INSECURE_DEFAULT_KEYS or len(key) < 32:
                 raise ValueError(
                     "CRITICAL SECURITY: In production mode, SECRET_KEY must be explicitly set "
                     "to a cryptographically secure random value of at least 32 characters."
                 )
-            # Remove any wildcard origins in production
-            self.BACKEND_CORS_ORIGINS = [o for o in self.BACKEND_CORS_ORIGINS if o != "*"]
         else:
             if not key:
                 self.SECRET_KEY = "dev-insecure-secret-key-32-characters-minimum!!"
                 
-        # Register extension origin if extension ID is configured
+        # 3. Register extension origin if extension ID is configured
         if self.CHROME_EXTENSION_ID:
             ext_origin = f"chrome-extension://{self.CHROME_EXTENSION_ID}"
             if ext_origin not in self.BACKEND_CORS_ORIGINS:
                 self.BACKEND_CORS_ORIGINS.append(ext_origin)
+
+        # 4. Register extension origin if explicit URL is configured
+        ext_direct = os.getenv("CHROME_EXTENSION_ORIGIN")
+        if ext_direct and ext_direct not in self.BACKEND_CORS_ORIGINS:
+            self.BACKEND_CORS_ORIGINS.append(ext_direct)
                 
         return self
 

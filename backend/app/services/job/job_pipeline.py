@@ -5,6 +5,7 @@ from app.models.job import Job, JobVersion, JobRequirement, JobSkill
 from app.services.ontology.taxonomy import ontology
 from app.schemas.job import JobCreate
 from app.core.logging import logger
+from app.services.parser.document_reader import DocumentReader
 
 SENIORITY_KEYWORDS = {
     "entry": ["entry", "junior", "associate", "graduate", "intern"],
@@ -31,7 +32,12 @@ class JobPipeline:
         Parses raw job description text, extracts structured requirements with classifications and weights,
         extracts normalized skills, and persists to DB.
         """
-        text = job_in.description
+        # Sanitize and defend against prompt injections and hidden characters in untrusted JD
+        clean_text, warnings = DocumentReader.sanitize_and_detect_hidden_text(job_in.description)
+        text = clean_text
+        if warnings:
+            logger.warning(f"Security warnings on JD capture for user {user_id}: {warnings}")
+
         
         # 1. Infer Seniority if not set
         seniority = job_in.seniority or cls._detect_seniority(job_in.title + " " + text)
@@ -51,24 +57,28 @@ class JobPipeline:
         job_skills = cls._extract_skills(text, classified_reqs)
 
         # 6. Create Job model
+        parsed_dict = {
+            "seniority": seniority,
+            "work_model": work_model,
+            "experience_range": [exp_min, exp_max],
+            "requirements_count": len(classified_reqs),
+            "skills_count": len(job_skills)
+        }
+        if warnings:
+            parsed_dict["security_warnings"] = warnings
+
         job = Job(
             user_id=user_id,
             title=job_in.title,
             company=job_in.company,
-            description=job_in.description,
+            description=text,
             raw_text=text,
             location=job_in.location or "Remote",
             work_model=work_model,
             seniority=seniority,
             experience_years_min=exp_min,
             experience_years_max=exp_max,
-            parsed_data={
-                "seniority": seniority,
-                "work_model": work_model,
-                "experience_range": [exp_min, exp_max],
-                "requirements_count": len(classified_reqs),
-                "skills_count": len(job_skills)
-            }
+            parsed_data=parsed_dict
         )
         db.add(job)
         db.flush()

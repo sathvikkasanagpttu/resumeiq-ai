@@ -49,6 +49,10 @@ async def add_process_time_and_logging(request: Request, call_next):
     process_time = round((time.time() - start_time) * 1000, 2)
     response.headers["X-Request-ID"] = request_id
     response.headers["X-Response-Time-MS"] = str(process_time)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     
     logger.info(
         f"{request.method} {request.url.path} completed with {response.status_code} in {process_time}ms",
@@ -59,13 +63,42 @@ async def add_process_time_and_logging(request: Request, call_next):
 # Custom Exception Handler
 @app.exception_handler(ResumeIQException)
 async def resumeiq_exception_handler(request: Request, exc: ResumeIQException):
+    req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
     return JSONResponse(
         status_code=exc.status_code,
         content={
             "error_code": exc.error_code,
             "detail": exc.detail,
             "extra": exc.extra,
-            "request_id": getattr(request.state, "request_id", None)
+            "request_id": req_id
+        },
+        headers={
+            "X-Request-ID": req_id,
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY"
+        }
+    )
+
+# Catch-All Global Exception Handler (Prevent Stack Trace Leakage)
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    logger.error(
+        f"Unhandled error processing {request.method} {request.url.path}: {exc}",
+        exc_info=True,
+        extra={"request_id": req_id}
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error_code": "INTERNAL_SERVER_ERROR",
+            "detail": "An internal server error occurred.",
+            "request_id": req_id
+        },
+        headers={
+            "X-Request-ID": req_id,
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY"
         }
     )
 
