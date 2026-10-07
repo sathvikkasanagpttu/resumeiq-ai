@@ -60,6 +60,27 @@ services:
       timeout: 5s
       retries: 3
 
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resumeiq-worker
+    restart: always
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-resumeiq_user}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in environment}@db:5432/${POSTGRES_DB:-resumeiq_db}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set in environment}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-004}
+    command: ["python", "-m", "app.services.worker.rq_worker"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   frontend:
     build:
       context: ./frontend

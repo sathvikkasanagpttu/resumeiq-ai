@@ -13,10 +13,13 @@ class HealthCheckResponse(BaseModel):
 class TaskStatusResponse(BaseModel):
     task_id: str
     task_type: str
-    status: str  # pending, processing, completed, failed
+    status: str  # pending, processing, completed, failed, cancelled
     progress: float
     result: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    error: Optional[Any] = None
+    idempotency_key: Optional[str] = None
+    retry_count: int = 0
+    max_retries: int = 3
     created_at: datetime
     updated_at: datetime
 

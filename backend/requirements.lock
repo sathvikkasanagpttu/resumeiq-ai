@@ -8,6 +8,7 @@ cffi==2.1.1
 charset-normalizer==3.5.2
 click==8.5.0
 cloudpickle==3.1.2
+croniter==6.2.4
 cryptography==50.0.2
 distro==1.9.0
 fastapi==0.142.2
@@ -49,6 +50,7 @@ python-multipart==0.0.32
 PyYAML==6.0.3
 redis==8.1.0
 requests==2.34.2
+rq==2.12.0
 scikit-learn==1.9.1
 scipy==1.18.1
 six==1.17.0

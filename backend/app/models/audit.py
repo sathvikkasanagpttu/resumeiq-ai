@@ -40,9 +40,13 @@ class BackgroundTask(Base):
     id = Column(String(36), primary_key=True, default=generate_uuid)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     task_type = Column(String(100), nullable=False)  # parse_resume, parse_job, compute_match, generate_doc
-    status = Column(String(50), default="pending")  # pending, processing, completed, failed
+    status = Column(String(50), default="pending")  # pending, processing, completed, failed, cancelled
     progress = Column(Float, default=0.0)  # 0.0 - 1.0
     result = Column(JSON, nullable=True)
     error = Column(JSON, nullable=True)
+    idempotency_key = Column(String(255), nullable=True, unique=True, index=True)
+    retry_count = Column(Integer, default=0, nullable=False)
+    max_retries = Column(Integer, default=3, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
