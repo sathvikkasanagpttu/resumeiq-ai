@@ -31,6 +31,15 @@ class EvidenceNotFoundError(ResumeIQException):
             extra=extra,
         )
 
+class ResourceNotFoundError(ResumeIQException):
+    def __init__(self, detail: str = "Resource not found", extra: Optional[Dict[str, Any]] = None):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=detail,
+            error_code="RESOURCE_NOT_FOUND",
+            extra=extra,
+        )
+
 class HallucinationDetectedError(ResumeIQException):
     def __init__(self, detail: str, extra: Optional[Dict[str, Any]] = None):
         super().__init__(

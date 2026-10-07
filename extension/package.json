@@ -1,0 +1,28 @@
+{
+  "name": "resumeiq-extension",
+  "version": "2.1.0",
+  "private": true,
+  "description": "ResumeIQ - Instant Resume & Job Matcher Chrome Extension",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --experimental-strip-types --test tests/adapters.test.ts"
+  },
+  "dependencies": {
+    "lucide-react": "^1.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

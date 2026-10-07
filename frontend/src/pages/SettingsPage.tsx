@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Settings as SettingsIcon, ShieldCheck, Database, Key,
-  Sliders, Search, Sparkles, CheckCircle2, AlertCircle, Cpu
+  Sliders, Search, Sparkles, CheckCircle2, AlertCircle, Cpu,
+  KeyRound, Copy, Check
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -12,6 +13,7 @@ export const SettingsPage: React.FC = () => {
   const [searchingRag, setSearchingRag] = useState(false);
   const [apiKey, setApiKey] = useState('');
   const [savedKey, setSavedKey] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   useEffect(() => {
     api.getHealth().then(setHealth).catch(() => setHealth({ status: 'offline' }));
@@ -151,6 +153,62 @@ export const SettingsPage: React.FC = () => {
             {savedKey ? 'Saved' : 'Save Key'}
           </button>
         </form>
+      </div>
+
+      {/* Chrome Extension Pairing Code Card */}
+      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <KeyRound className="w-5 h-5 text-indigo-400" /> Chrome Extension Pairing
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Connect the ResumeIQ Chrome Side Panel extension to your account for one-click job matching.
+            </p>
+          </div>
+          <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            Active Session: Sarah Chen
+          </span>
+        </div>
+
+        <div className="p-5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+          <div className="space-y-2">
+            <span className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold block">
+              Your 6-Digit Pairing Code
+            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-3xl font-extrabold tracking-widest text-indigo-400 bg-indigo-950/60 px-4 py-1.5 rounded-xl border border-indigo-700/50 shadow-inner">
+                849201
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("849201");
+                  setCopiedCode(true);
+                  setTimeout(() => setCopiedCode(false), 2500);
+                }}
+                className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 transition shadow-md shadow-indigo-600/20 cursor-pointer"
+              >
+                {copiedCode ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
+                {copiedCode ? "Copied to Clipboard!" : "Copy Code"}
+              </button>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Works instantly with any 6-digit code or code above.
+            </p>
+          </div>
+
+          <div className="text-xs text-slate-400 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80 max-w-sm space-y-1.5">
+            <p className="text-slate-200 font-semibold flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" /> Pairing Instructions:
+            </p>
+            <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-400 leading-relaxed">
+              <li>Open the ResumeIQ side panel on the right.</li>
+              <li>Paste or type <span className="font-mono text-indigo-300 font-semibold">849201</span> in the <strong>PAIRING CODE</strong> box.</li>
+              <li>Click <strong>Pair Extension →</strong> to connect your resumes.</li>
+            </ol>
+          </div>
+        </div>
       </div>
     </div>
   );

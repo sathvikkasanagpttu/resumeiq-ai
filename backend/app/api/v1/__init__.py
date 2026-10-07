@@ -13,12 +13,14 @@ from app.api.v1.rag import router as rag_router
 from app.api.v1.tasks import router as tasks_router
 from app.api.v1.health import router as health_router
 from app.api.v1.builder import router as builder_router
+from app.api.v1.extension import router as extension_router
 
 api_v1_router = APIRouter()
 
 api_v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 api_v1_router.include_router(resumes_router, prefix="/resumes", tags=["Resume Intelligence"])
 api_v1_router.include_router(builder_router, prefix="/builder", tags=["Auto Resume Builder"])
+api_v1_router.include_router(extension_router, prefix="/extension", tags=["Browser Extension API"])
 api_v1_router.include_router(jobs_router, prefix="/jobs", tags=["Job Intelligence"])
 api_v1_router.include_router(matching_router, prefix="/matching", tags=["Hybrid Matching"])
 api_v1_router.include_router(evidence_router, prefix="/evidence", tags=["Evidence Graph"])
