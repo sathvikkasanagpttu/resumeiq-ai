@@ -22,7 +22,9 @@ from app.models import Base
 from app.core.config import settings
 
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+current_url = config.get_main_option("sqlalchemy.url")
+if not current_url or current_url.startswith("driver://"):
+    config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # ... etc.
 

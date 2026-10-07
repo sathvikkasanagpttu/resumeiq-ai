@@ -6,15 +6,15 @@ services:
     container_name: resumeiq-postgres
     restart: always
     environment:
-      POSTGRES_USER: resumeiq_user
-      POSTGRES_PASSWORD: resumeiq_secure_password_2026
-      POSTGRES_DB: resumeiq_db
+      POSTGRES_USER: ${POSTGRES_USER:-resumeiq_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in environment}
+      POSTGRES_DB: ${POSTGRES_DB:-resumeiq_db}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U resumeiq_user -d resumeiq_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-resumeiq_user} -d ${POSTGRES_DB:-resumeiq_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,12 +40,13 @@ services:
     container_name: resumeiq-backend
     restart: always
     environment:
-      DATABASE_URL: postgresql+psycopg2://resumeiq_user:resumeiq_secure_password_2026@db:5432/resumeiq_db
-      REDIS_URL: redis://redis:6379/0
-      SECRET_KEY: resumeiq-production-secret-jwt-key-2026
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-resumeiq_user}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in environment}@db:5432/${POSTGRES_DB:-resumeiq_db}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set in environment}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: gemini-2.5-flash
-      EMBEDDING_MODEL: text-embedding-004
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-004}
     ports:
       - "8000:8000"
     depends_on:

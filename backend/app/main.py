@@ -15,35 +15,7 @@ from app.core.security import get_password_hash
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: ensure tables exist
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables initialized.")
-
-    # Seed demo user for testing/instant UX
-    with SessionLocal() as db:
-        rag_retriever.sync_to_db(db)
-        demo_user = db.query(User).filter(User.email == "demo@resumeiq.ai").first()
-        if not demo_user:
-            demo_user = User(
-                email="demo@resumeiq.ai",
-                hashed_password=get_password_hash("ResumeIQ2026!"),
-                full_name="Sarah Chen",
-                role="candidate"
-            )
-            db.add(demo_user)
-            db.flush()
-            profile = CandidateProfile(
-                user_id=demo_user.id,
-                headline="Senior Backend & AI Systems Engineer",
-                summary="Over 6 years of experience building high-throughput distributed systems and LLM/RAG pipelines.",
-                total_experience_years=6.0,
-                seniority_level="Senior",
-                location="San Francisco, CA"
-            )
-            db.add(profile)
-            db.commit()
-            logger.info("Demo user 'demo@resumeiq.ai' seeded successfully.")
-
+    logger.info("Starting up ResumeIQ application.")
     yield
     logger.info("Shutting down ResumeIQ application.")
 

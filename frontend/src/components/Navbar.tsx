@@ -4,10 +4,22 @@ import { api } from '../services/api';
 
 export const Navbar: React.FC = () => {
   const [health, setHealth] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     api.getHealth().then(setHealth).catch(() => setHealth({ status: 'offline' }));
+    api.getMe().then(setUser).catch(() => setUser(null));
   }, []);
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((part) => part[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  };
 
   return (
     <header className="h-16 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
@@ -44,11 +56,15 @@ export const Navbar: React.FC = () => {
         {/* User Profile */}
         <div className="flex items-center gap-3 pl-3 border-l border-slate-800">
           <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-teal-300 font-semibold text-xs">
-            SC
+            {getInitials(user?.full_name)}
           </div>
           <div className="hidden md:block text-left">
-            <div className="text-xs font-semibold text-white">Sarah Chen</div>
-            <div className="text-[10px] text-slate-400 font-mono">Senior Engineer</div>
+            <div className="text-xs font-semibold text-white">
+              {user?.full_name || 'Authenticated User'}
+            </div>
+            <div className="text-[10px] text-slate-400 font-mono">
+              {user?.email || 'Logged In'}
+            </div>
           </div>
         </div>
       </div>
