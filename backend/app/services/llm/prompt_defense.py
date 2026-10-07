@@ -14,13 +14,27 @@ INJECTION_PATTERNS = [
     r"roleplay\s+as\s+an\s+ai\s+without\s+restrictions",
 ]
 
+XML_BOUNDARY_TAGS = [
+    r"</?SYSTEM_DIRECTIVE>",
+    r"</?RETRIEVED_KNOWLEDGE_BASE>",
+    r"</?UNTRUSTED_CANDIDATE_DATA>",
+    r"</?UNTRUSTED_JOB_DATA>",
+    r"</?GENERATION_TASK>",
+]
+
 class PromptInjectionDefense:
     """
     Guards AI generation against prompt injections originating from untrusted resumes or job postings.
     Isolates data boundaries and detects malicious overrides.
     """
-    @staticmethod
-    def sanitize_untrusted_input(text: str) -> str:
+    @classmethod
+    def sanitize_untrusted_input(cls, text: str) -> str:
+        if not text:
+            return ""
+        # Neutralize XML boundary attempts to prevent delimiter escaping
+        for tag_pattern in XML_BOUNDARY_TAGS:
+            text = re.sub(tag_pattern, "[FILTERED_TAG]", text, flags=re.IGNORECASE)
+
         # Check for blatant injection patterns
         for pattern in INJECTION_PATTERNS:
             if re.search(pattern, text, re.IGNORECASE):
@@ -31,6 +45,20 @@ class PromptInjectionDefense:
         # Escape backticks and delimiters
         text = text.replace("```", "'''")
         return text
+
+    @staticmethod
+    def validate_output_schema(output: Dict[str, Any], expected_schema: Dict[str, type]) -> bool:
+        """
+        Validates that LLM output conforms to expected schema types.
+        """
+        if not isinstance(output, dict):
+            return False
+        for key, expected_type in expected_schema.items():
+            if key not in output:
+                return False
+            if not isinstance(output[key], expected_type):
+                return False
+        return True
 
     @classmethod
     def wrap_prompt(
